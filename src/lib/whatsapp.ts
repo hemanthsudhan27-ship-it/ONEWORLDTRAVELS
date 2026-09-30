@@ -1,0 +1,74 @@
+/**
+ * Centralized WhatsApp & Contact configuration for One World Travel & Tours.
+ * Primary contact details from Puthiyara, Calicut office.
+ */
+
+export const PRIMARY_PHONE = "+91 907 2329 992"
+export const SECONDARY_PHONE = "+91 952 6617 757"
+export const OFFICE_LOCATION = "Puthiyara, Calicut, Kerala, India"
+
+// Primary WhatsApp number (normalized for wa.me)
+export const WHATSAPP_NUMBER = "919072329992"
+export const WHATSAPP_NUMBER_ALT = "919526617757"
+export const WHATSAPP_BASE_URL = `https://wa.me/${WHATSAPP_NUMBER}`
+
+/**
+ * Build a WhatsApp URL with a pre-filled message.
+ */
+export function buildWhatsAppUrl(message: string, altNumber = false): string {
+  const number = altNumber ? WHATSAPP_NUMBER_ALT : WHATSAPP_NUMBER
+  return `https://wa.me/${number}?text=${encodeURIComponent(message)}`
+}
+
+/**
+ * Build a service-specific WhatsApp enquiry URL.
+ */
+export function buildServiceEnquiryUrl(
+  serviceName: string,
+  details?: { name?: string; travelDates?: string; travelers?: string; notes?: string }
+): string {
+  let message = `Hello One World Travel & Tours, I would like to enquire about your *${serviceName}* service.`
+  
+  if (details?.name) {
+    message += `\nName: ${details.name}`
+  }
+  if (details?.travelDates) {
+    message += `\nPreferred Dates: ${details.travelDates}`
+  }
+  if (details?.travelers) {
+    message += `\nTravellers: ${details.travelers}`
+  }
+  if (details?.notes) {
+    message += `\nRequirements / Notes: ${details.notes}`
+  }
+  
+  message += `\n\nCould you please provide information on availability, requirements, and pricing?`
+  return buildWhatsAppUrl(message)
+}
+
+/**
+ * Build a journey-specific WhatsApp enquiry URL.
+ */
+export function buildJourneyEnquiryUrl(journeyName: string, destination?: string): string {
+  const message = destination
+    ? `Hello, I am interested in the *${journeyName}* journey to *${destination}*.\n\nCould you please share the itinerary, pricing, and availability?`
+    : `Hello, I am interested in the *${journeyName}* journey.\n\nCould you please share the itinerary, pricing, and availability?`
+  return buildWhatsAppUrl(message)
+}
+
+/**
+ * Build a destination-specific WhatsApp enquiry URL.
+ */
+export function buildDestinationEnquiryUrl(destinationName: string): string {
+  const message = `Hello, I am interested in travelling to *${destinationName}*.\n\nCould you please share available journeys, pricing, and recommendations?`
+  return buildWhatsAppUrl(message)
+}
+
+/**
+ * Build a general enquiry WhatsApp URL.
+ */
+export function buildGeneralEnquiryUrl(): string {
+  const message = "Hello One World Travel & Tours, I would like to enquire about your travel services.\n\nCould you please help me plan?"
+  return buildWhatsAppUrl(message)
+}
+
