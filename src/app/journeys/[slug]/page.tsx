@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { getJourneyBySlug, journeys } from '@/lib/data/journeys'
 import { Clock, Users, Mountain, MapPin, Check, FileImage, ShieldCheck } from 'lucide-react'
 import { buildJourneyEnquiryUrl, buildGeneralEnquiryUrl } from '@/lib/whatsapp'
+import { BookingForm } from '@/components/journeys/BookingForm'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -208,57 +209,13 @@ export default async function JourneyDetailPage({ params }: Props) {
             </section>
           )}
 
+
         </div>
 
         {/* Right — Sticky booking panel */}
         <div className="lg:col-span-1">
-          <div className="sticky top-24 bg-background-soft border border-black/[0.08] shadow-xl rounded-3xl p-7">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-label text-xs text-muted">Book Package</span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold uppercase">Active</span>
-            </div>
-            
-            <p className="text-3xl font-bold text-foreground mb-1 tracking-tight">
-              {journey.price ? `₹${journey.price.toLocaleString('en-IN')}` : journey.priceText || 'On Request'}
-            </p>
-            <p className="text-xs text-muted mb-6">all inclusive package rate</p>
-
-            <div className="space-y-3 mb-6">
-              <div className="p-3.5 rounded-2xl bg-white border border-black/[0.06] text-sm">
-                <p className="text-[10px] text-muted uppercase tracking-wider mb-0.5">Duration</p>
-                <p className="font-semibold text-foreground">{journey.duration}</p>
-              </div>
-              <div className="p-3.5 rounded-2xl bg-white border border-black/[0.06] text-sm">
-                <p className="text-[10px] text-muted uppercase tracking-wider mb-0.5">Category</p>
-                <p className="font-semibold text-foreground">{journey.experienceType}</p>
-              </div>
-              <div className="p-3.5 rounded-2xl bg-white border border-black/[0.06] text-sm">
-                <p className="text-[10px] text-muted uppercase tracking-wider mb-0.5">Operator</p>
-                <p className="font-semibold text-foreground">One World Holidays (IATA Certified)</p>
-              </div>
-            </div>
-
-            <a
-              href={buildJourneyEnquiryUrl(journey.title, journey.destination)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-accent w-full justify-center py-4 mb-3 shadow-lg shadow-accent/20"
-              id={`enquire-${journey.slug}`}
-            >
-              Enquire via WhatsApp →
-            </a>
-            <a
-              href={buildGeneralEnquiryUrl()}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-outline w-full justify-center text-sm py-3"
-            >
-              Ask a Question
-            </a>
-
-            <p className="text-[11px] text-center text-muted mt-4">
-              Direct connection with One World Holidays travel desk.
-            </p>
+          <div className="sticky top-24">
+            <BookingForm defaultJourneySlug={journey.slug} />
           </div>
         </div>
       </div>

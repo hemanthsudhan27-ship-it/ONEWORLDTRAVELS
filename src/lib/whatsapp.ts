@@ -46,13 +46,25 @@ export function buildServiceEnquiryUrl(
   return buildWhatsAppUrl(message)
 }
 
-/**
- * Build a journey-specific WhatsApp enquiry URL.
- */
-export function buildJourneyEnquiryUrl(journeyName: string, destination?: string): string {
-  const message = destination
-    ? `Hello, I am interested in the *${journeyName}* journey to *${destination}*.\n\nCould you please share the itinerary, pricing, and availability?`
-    : `Hello, I am interested in the *${journeyName}* journey.\n\nCould you please share the itinerary, pricing, and availability?`
+export function buildJourneyEnquiryUrl(
+  journeyName: string, 
+  destination?: string,
+  details?: { name?: string; phone?: string; travelDates?: string; travelers?: string }
+): string {
+  let message = destination
+    ? `Hello, I am interested in the *${journeyName}* journey to *${destination}*.`
+    : `Hello, I am interested in the *${journeyName}* journey.`
+    
+  if (details) {
+    message += `\n`
+    if (details.name) message += `\nName: ${details.name}`
+    if (details.phone) message += `\nPhone: ${details.phone}`
+    if (details.travelDates) message += `\nPlanned Date: ${details.travelDates}`
+    if (details.travelers) message += `\nTravellers: ${details.travelers}`
+  }
+
+  message += `\n\nCould you please share the itinerary, pricing, and availability?`
+  
   return buildWhatsAppUrl(message)
 }
 
