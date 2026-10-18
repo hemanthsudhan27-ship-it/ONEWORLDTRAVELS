@@ -6,6 +6,7 @@ import { getJourneyBySlug, journeys } from '@/lib/data/journeys'
 import { Clock, Users, Mountain, MapPin, Check, FileImage, ShieldCheck } from 'lucide-react'
 import { buildJourneyEnquiryUrl, buildGeneralEnquiryUrl } from '@/lib/whatsapp'
 import { BookingForm } from '@/components/journeys/BookingForm'
+import EnquiryModal from '@/components/ui/EnquiryModal'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -103,6 +104,20 @@ export default async function JourneyDetailPage({ params }: Props) {
                   {journey.price ? `₹${journey.price.toLocaleString('en-IN')}` : journey.priceText || 'On Request'}
                 </p>
                 <p className="text-[11px] text-muted">per person · all inclusive</p>
+              </div>
+
+              <div className="pt-3 border-t border-black/10">
+                <EnquiryModal
+                  initialDestination={journey.title}
+                  trigger={
+                    <button
+                      type="button"
+                      className="w-full btn btn-accent text-[12px] py-2.5 rounded-xl justify-center font-bold tracking-wider shadow-md shadow-[#C4171A]/20 cursor-pointer"
+                    >
+                      Enquire via Modal
+                    </button>
+                  }
+                />
               </div>
             </div>
           </div>

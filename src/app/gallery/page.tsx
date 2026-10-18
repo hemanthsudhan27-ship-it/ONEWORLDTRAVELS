@@ -15,18 +15,11 @@ export const metadata: Metadata = {
   },
 }
 
-const galleryImages = [
-  { src: '/images/hero-himalaya.jpg', alt: 'Himalayan trail at golden hour — Spiti Valley', caption: 'Spiti Valley, Himalayas' },
-  { src: '/images/dest-rajasthan.jpg', alt: 'Golden sand dunes of the Thar Desert at dusk', caption: 'Thar Desert, Rajasthan' },
-  { src: '/images/dest-kerala.jpg', alt: 'Backwaters of Alleppey reflected at dawn', caption: 'Alleppey Backwaters, Kerala' },
-  { src: '/images/dest-morocco.jpg', alt: 'Marrakech medina at the blue hour', caption: 'Marrakech, Morocco' },
-  { src: '/images/dest-japan.jpg', alt: 'A quiet temple path in Kyoto in autumn', caption: 'Kyoto, Japan' },
-  { src: '/images/about-story.jpg', alt: 'Traveller at a mountain viewpoint', caption: 'High Altitude, Himalayas' },
-  { src: '/images/dest-rajasthan.jpg', alt: 'Mehrangarh Fort, Jodhpur', caption: 'Jodhpur, Rajasthan' },
-  { src: '/images/dest-kerala.jpg', alt: 'Varkala red cliffs at sunset', caption: 'Varkala, Kerala' },
-]
+import { getGalleryItems } from '@/lib/data/gallery'
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  const galleryImages = await getGalleryItems()
+
   return (
     <div>
       {/* Hero */}
@@ -57,10 +50,10 @@ export default function GalleryPage() {
           <div className="columns-1 sm:columns-2 lg:columns-3 gap-5 space-y-5">
             {galleryImages.map((img, i) => (
               <figure
-                key={`${img.src}-${i}`}
+                key={img.id || `${img.src}-${i}`}
                 className="break-inside-avoid group relative overflow-hidden rounded-3xl"
                 style={{
-                  aspectRatio: i % 3 === 0 ? '4/5' : i % 3 === 1 ? '3/4' : '4/3',
+                  aspectRatio: img.aspectRatio || (i % 3 === 0 ? '4/5' : i % 3 === 1 ? '3/4' : '4/3'),
                 }}
               >
                 <Image

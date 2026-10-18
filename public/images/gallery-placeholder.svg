@@ -1,0 +1,51 @@
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1A1A1A"/>
+      <stop offset="50%" stop-color="#222225"/>
+      <stop offset="100%" stop-color="#141416"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C4171A"/>
+      <stop offset="100%" stop-color="#E23D40"/>
+    </linearGradient>
+    <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#C4171A" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#C4171A" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#FFFFFF" stroke-opacity="0.03" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="url(#bgGrad)"/>
+  
+  <!-- Subtle Grid -->
+  <rect width="100%" height="100%" fill="url(#grid)"/>
+
+  <!-- Radial Glow Behind Icon -->
+  <circle cx="400" cy="270" r="180" fill="url(#glowGrad)"/>
+
+  <!-- Decorative Abstract Background Circles -->
+  <circle cx="400" cy="270" r="110" stroke="#FFFFFF" stroke-opacity="0.04" stroke-width="1" stroke-dasharray="4 6"/>
+  <circle cx="400" cy="270" r="75" stroke="#FFFFFF" stroke-opacity="0.07" stroke-width="1"/>
+
+  <!-- Center Icon Frame -->
+  <rect x="355" y="225" width="90" height="90" rx="22" fill="#2A2A2E" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="1.5"/>
+
+  <!-- Landscape Camera / Mountain & Sun Travel Icon -->
+  <!-- Sun -->
+  <circle cx="414" cy="254" r="7" fill="url(#accentGrad)"/>
+  <!-- Mountain Peaks -->
+  <path d="M372 292L393 264C394.5 262 397.5 262 399 264L412 281L419 272C420.5 270 423.5 270 425 272L438 292H372Z" fill="#FFFFFF" fill-opacity="0.85"/>
+
+  <!-- Text: One World Travel -->
+  <text x="400" y="375" text-anchor="middle" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="600" letter-spacing="3" fill="#FFFFFF" fill-opacity="0.9">
+    ONE WORLD TRAVEL
+  </text>
+  
+  <text x="400" y="405" text-anchor="middle" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="400" letter-spacing="1.5" fill="#888890">
+    GALLERY COMING SOON
+  </text>
+</svg>

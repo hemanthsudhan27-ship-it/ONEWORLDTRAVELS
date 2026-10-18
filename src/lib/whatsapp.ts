@@ -77,6 +77,42 @@ export function buildDestinationEnquiryUrl(destinationName: string): string {
 }
 
 /**
+ * Build a comprehensive package enquiry WhatsApp URL with full traveler breakdown.
+ */
+export function buildPackageEnquiryWhatsAppUrl(data: {
+  name: string
+  email?: string
+  phone: string
+  destination: string
+  adults: string
+  children: string
+  preferredDate: string
+  message?: string
+}): string {
+  const childrenText = data.children === "0" ? "None" : data.children
+  let message = `Hello One World Travel & Tours, I would like to enquire about a journey package!
+
+*Name*: ${data.name}`
+
+  if (data.email) {
+    message += `\n*Email*: ${data.email}`
+  }
+
+  message += `
+*Phone*: ${data.phone}
+*Destination / Package*: ${data.destination}
+*Adults*: ${data.adults}
+*Children*: ${childrenText}
+*Preferred Travel Date*: ${data.preferredDate}`
+
+  if (data.message) {
+    message += `\n*Message*: ${data.message}`
+  }
+
+  return buildWhatsAppUrl(message)
+}
+
+/**
  * Build a general enquiry WhatsApp URL.
  */
 export function buildGeneralEnquiryUrl(): string {

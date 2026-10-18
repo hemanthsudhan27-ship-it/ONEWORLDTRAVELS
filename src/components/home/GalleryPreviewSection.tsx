@@ -4,15 +4,19 @@ import { useRef, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-const previewImages = [
-  { src: '/images/hero-himalaya.jpg', alt: 'Himalayan landscape at golden hour' },
-  { src: '/images/dest-rajasthan.jpg', alt: 'Thar Desert dunes at dusk' },
-  { src: '/images/dest-kerala.jpg', alt: 'Kerala backwaters at dawn' },
-  { src: '/images/dest-morocco.jpg', alt: 'Marrakech medina at blue hour' },
-]
+import galleryData from '@/lib/data/gallery.json'
 
 export default function GalleryPreviewSection() {
   const sectionRef = useRef<HTMLElement>(null)
+  const previewImages = (galleryData && galleryData.length > 0
+    ? galleryData.slice(0, 4)
+    : [
+        { src: '/images/gallery-placeholder.svg', alt: 'One World Travel' },
+        { src: '/images/gallery-placeholder.svg', alt: 'One World Travel' },
+        { src: '/images/gallery-placeholder.svg', alt: 'One World Travel' },
+        { src: '/images/gallery-placeholder.svg', alt: 'One World Travel' },
+      ])
+
 
   useEffect(() => {
     const observer = new IntersectionObserver(
