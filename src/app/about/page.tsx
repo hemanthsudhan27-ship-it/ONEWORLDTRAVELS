@@ -15,12 +15,12 @@ export const metadata: Metadata = {
 }
 
 const milestones = [
-  { year: '2016', event: 'Founded in Mumbai with a team of three.' },
-  { year: '2018', event: 'First international journeys to Morocco and Japan.' },
-  { year: '2020', event: 'Rebuilt from scratch. Came back more intentional.' },
-  { year: '2022', event: 'Reached 1,000 curated journeys. Celebrated quietly.' },
-  { year: '2024', event: 'Expanded to 48 destinations across Asia, Africa, and Europe.' },
-  { year: '2026', event: 'Still the same three people. Plus about forty more.' },
+  { year: '2016', event: 'Founded in Puthiyara, Calicut with a passion for personalized travel.' },
+  { year: '2018', event: 'First international journeys to Southeast Asia and Middle East.' },
+  { year: '2020', event: 'Accredited by IATA and TAFI for global airline ticketing authority.' },
+  { year: '2022', event: 'Reached 1,000+ curated journeys and Umrah pilgrimages.' },
+  { year: '2024', event: 'Expanded to 50+ global destinations across Asia, Middle East, and Europe.' },
+  { year: '2026', event: 'Trusted by thousands of happy travellers worldwide.' },
 ]
 
 const values = [
@@ -96,8 +96,8 @@ export default function AboutPage() {
             <div className="space-y-8">
               <div className="img-organic relative aspect-[4/3] overflow-hidden">
                 <Image
-                  src="/images/about-story.jpg"
-                  alt="The One World team planning journeys together over maps and travel journals"
+                  src="/images/about-travel.jpg"
+                  alt="Passenger jetliner soaring gracefully above turquoise coral reefs and tropical islands at golden hour — One World Travel"
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover"

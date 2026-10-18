@@ -2,44 +2,45 @@
 
 import { useRef, useEffect } from 'react'
 import { buildGeneralEnquiryUrl } from '@/lib/whatsapp'
+import { CompassDoodle, MountainPeaksDoodle } from '@/components/ui/TravelDoodles'
 
 const stats = [
-  { value: '5+', label: 'Years of Curation' },
-  { value: '1K+', label: 'Happy Travellers' },
-  { value: '20+', label: 'Destinations' },
+  { value: '10+', label: 'Years of Curation' },
+  { value: '10K+', label: 'Happy Travellers' },
+  { value: '30+', label: 'Global Destinations' },
   { value: '24/7', label: 'On-Trip Support' },
 ]
 
 const reasons = [
   {
     number: '01',
-    title: 'Deeply curated',
-    description: 'We only operate in places we know deeply. Not just visited — understood.',
+    title: 'IATA & TAFI Accredited',
+    description: 'Authorized airline ticketing, officially certified travel operations, and verified consumer protection.',
   },
   {
     number: '02',
-    title: 'Small groups',
-    description: 'Every journey is designed for intimacy. Maximum 8 people. No herded tours.',
+    title: 'Tailored Journeys',
+    description: 'Every itinerary is built around your schedule and interests — private transfers, handpicked hotels, and curated pacing.',
   },
   {
     number: '03',
-    title: 'Expert guides',
-    description: 'Local guides who have lived these landscapes for decades, not someone reading from a script.',
+    title: 'Direct Hub Departures',
+    description: 'Seamless flight connections directly out of Calicut (CCJ), Kochi, Kannur, and major international hubs.',
   },
   {
     number: '04',
-    title: 'Honest pricing',
-    description: 'All-inclusive pricing with no hidden costs. What you see is what you pay.',
+    title: 'Transparent Pricing',
+    description: 'All-inclusive quotes with clear inclusions. No hidden fees or surprise surcharges during your trip.',
   },
   {
     number: '05',
-    title: 'WhatsApp access',
-    description: 'Our team is reachable via WhatsApp throughout your journey. No call centres.',
+    title: 'WhatsApp Concierge',
+    description: 'Our Puthiyara, Calicut travel desk stays connected with you throughout your journey for instant help.',
   },
   {
     number: '06',
-    title: 'Tailored journeys',
-    description: 'Every itinerary is adjustable. Tell us what matters to you and we will build around it.',
+    title: 'Complete Travel Services',
+    description: 'Flights, global visas, holiday packages, Umrah pilgrimages, resort stays, and luxury cruises under one roof.',
   },
 ]
 
@@ -71,19 +72,29 @@ export default function WhyChooseUsSection() {
       style={{ background: 'var(--foreground)', color: 'white' }}
       aria-label="Why travel with One World"
     >
-      <div className="container-wide">
+      <div className="container-wide relative">
+        {/* Subtle background doodle */}
+        <div className="absolute -top-4 right-8 sm:right-28 pointer-events-none opacity-20 hidden md:block">
+          <MountainPeaksDoodle className="w-28 h-18 text-white" color="white" opacity={0.25} />
+        </div>
+
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-16 gap-6">
           <div>
             <div className="reveal-up flex items-center gap-3 mb-5">
               <span className="accent-dot" aria-hidden="true" />
-              <span className="text-label text-xs opacity-50">Why One World</span>
+              <span className="text-label text-xs opacity-50">05 — Why One World</span>
             </div>
-            <h2 className="text-headline reveal-up" style={{ color: 'white' }}>
-              Travel that
-              <br />
-              means something.
-            </h2>
+            <div className="flex items-center gap-4">
+              <h2 className="text-headline reveal-up" style={{ color: 'white' }}>
+                Travel that
+                <br />
+                means something.
+              </h2>
+              <div className="hidden sm:block pointer-events-none opacity-40">
+                <CompassDoodle className="w-14 h-14 text-white" color="white" opacity={0.3} />
+              </div>
+            </div>
           </div>
           <div className="reveal-up">
             <a

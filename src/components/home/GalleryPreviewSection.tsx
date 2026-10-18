@@ -47,7 +47,7 @@ export default function GalleryPreviewSection() {
         <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-12 gap-6">
           <div>
             <div className="reveal-up flex items-center gap-3 mb-5">
-              <span className="text-label text-xs" style={{ color: 'var(--muted)' }}>06 — Gallery</span>
+              <span className="text-label text-xs" style={{ color: 'var(--muted)' }}>08 — Travel Gallery</span>
               <span className="accent-line" aria-hidden="true" />
             </div>
             <h2 className="text-headline reveal-up">

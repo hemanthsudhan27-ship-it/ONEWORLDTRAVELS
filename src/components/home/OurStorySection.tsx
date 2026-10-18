@@ -37,7 +37,7 @@ export default function OurStorySection() {
       <div className="container-wide">
         {/* Section number + label */}
         <div className="reveal-up flex items-center gap-3 mb-16">
-          <span className="text-label text-xs" style={{ color: 'var(--muted)' }}>02 — Our Story</span>
+          <span className="text-label text-xs" style={{ color: 'var(--muted)' }}>06 — Our Story</span>
           <span className="accent-line" aria-hidden="true" />
         </div>
 
@@ -55,18 +55,13 @@ export default function OurStorySection() {
 
             <div className="reveal-up space-y-4 mb-10">
               <p className="text-body">
-                One World was born from a simple dissatisfaction: the feeling that most travel was happening
-                <em className="not-italic font-medium" style={{ color: 'var(--foreground)' }}> at </em>
-                places, not
-                <em className="not-italic font-medium" style={{ color: 'var(--foreground)' }}> inside </em>
-                them.
+                One World Travel & Tours was founded on a simple conviction: travel should never feel mechanical or impersonal. It should feel deeply personal, seamless, and memorable.
               </p>
               <p className="text-body">
-                We started in 2016 with one small office in Mumbai and a singular belief: that every traveller deserves a
-                journey built around them — not a template, not a checklist, not a package. A real journey.
+                Headquartered in Puthiyara, Calicut since 2016, we have grown into an IATA-accredited agency and TAFI member, earning the trust of thousands of families, honeymooners, corporate travellers, and pilgrims.
               </p>
               <p className="text-body">
-                Ten years and thousands of curated trips later, we still plan every journey the same way: by listening first.
+                From international flight ticketing and seamless visa processing to sacred Umrah journeys and bespoke holiday getaways, we craft each itinerary with care, local knowledge, and end-to-end dedication.
               </p>
             </div>
 
@@ -96,8 +91,8 @@ export default function OurStorySection() {
           <div className="reveal-up relative">
             <div className="img-organic relative aspect-[4/5] overflow-hidden">
               <Image
-                src="/images/about-story.jpg"
-                alt="Two travelers planning a journey together over maps and travel journals in a cozy mountain lodge"
+                src="/images/about-travel.jpg"
+                alt="Passenger jetliner soaring gracefully above turquoise coral reefs and tropical islands at golden hour — One World Travel"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover object-center hover:scale-105 transition-transform duration-700"

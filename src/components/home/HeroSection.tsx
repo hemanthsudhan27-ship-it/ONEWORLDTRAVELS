@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -11,9 +11,22 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
+  Palmtree,
+  MoonStar,
+  Plane,
+  ShieldCheck,
+  Calendar,
+  Users,
 } from 'lucide-react'
-import { buildGeneralEnquiryUrl, buildJourneyEnquiryUrl } from '@/lib/whatsapp'
+import { buildGeneralEnquiryUrl, buildJourneyEnquiryUrl, buildWhatsAppUrl } from '@/lib/whatsapp'
 import { journeys } from '@/lib/data/journeys'
+import {
+  HotAirBalloonDoodle,
+  MountainPeaksDoodle,
+  AirplaneLoopDoodle,
+  CompassDoodle,
+  SuitcaseDoodle,
+} from '@/components/ui/TravelDoodles'
 
 function PaperPlaneIcon({ className }: { className?: string }) {
   return (
@@ -38,6 +51,36 @@ export default function HeroSection() {
   const floatingRef = useRef<HTMLDivElement>(null)
   const discoveryRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  const [activeTab, setActiveTab] = useState<'holidays' | 'umrah' | 'flights' | 'visas'>('holidays')
+  const [destination, setDestination] = useState('')
+  const [travelMonth, setTravelMonth] = useState('Flexible / Next 30 Days')
+  const [travellers, setTravellers] = useState('2 Travellers (Couple / Friends)')
+
+  const handleQuickEnquiry = () => {
+    let serviceLabel = 'Holiday Packages'
+    let specificDetail = destination || 'Top Recommended Destination'
+
+    if (activeTab === 'umrah') {
+      serviceLabel = 'Umrah Pilgrimage Package'
+      specificDetail = destination || 'Makkah & Madinah (Near Haram Stays)'
+    } else if (activeTab === 'flights') {
+      serviceLabel = 'Flight Ticket Booking'
+      specificDetail = destination || 'Domestic / International Sector'
+    } else if (activeTab === 'visas') {
+      serviceLabel = 'Global Visa Assistance'
+      specificDetail = destination || 'Tourist / Business Visa Consultation'
+    }
+
+    const message = `Hello One World Travel & Tours, I would like to enquire about:
+*Service / Destination*: ${serviceLabel} - ${specificDetail}
+*Preferred Month / Time*: ${travelMonth}
+*Travellers / Passengers*: ${travellers}
+
+Could you please share the itinerary details, current pricing, and availability?`
+
+    window.open(buildWhatsAppUrl(message), '_blank')
+  }
 
   useEffect(() => {
     const animatedElements = [
@@ -89,27 +132,42 @@ export default function HeroSection() {
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-r from-accent/5 via-accent/10 to-transparent blur-3xl rounded-full pointer-events-none -z-10" />
 
       <div className="container-wide relative z-10">
+        {/* Playful Floating Hot Air Balloon Doodle */}
+        <div className="absolute top-2 right-4 sm:right-12 lg:right-24 pointer-events-none z-10 hidden sm:block animate-pulse" style={{ animationDuration: '4s' }}>
+          <HotAirBalloonDoodle className="w-16 h-20 text-accent/80 drop-shadow-sm hover:scale-110 transition-transform" />
+        </div>
+
         {/* Main Upper Hero Layout: Left Content (40-45%) + Right Organic Image (45-50%) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center mb-16 lg:mb-20">
           
           {/* LEFT COLUMN: Editorial Typography & Primary CTA */}
           <div className="lg:col-span-6 xl:col-span-5 flex flex-col items-start z-20">
-            {/* Brand Pill */}
-            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-semibold tracking-wider uppercase mb-6 border border-accent/15">
-              <Compass className="w-3.5 h-3.5" />
-              <span>Est. 2016 · Curated Travel Journeys</span>
+            {/* Brand Pill & Flight Path Doodle */}
+            <div className="relative">
+              <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-semibold tracking-wider uppercase mb-6 border border-accent/15">
+                <Compass className="w-3.5 h-3.5" />
+                <span>Est. 2016 · Curated Travel Journeys</span>
+              </div>
+              <div className="absolute -top-7 -right-28 hidden md:block pointer-events-none opacity-80">
+                <AirplaneLoopDoodle className="w-24 h-14 text-accent/80" />
+              </div>
             </div>
 
-            {/* Main Headline */}
-            <h1
-              ref={headlineRef}
-              className="text-display text-foreground mb-6 font-serif tracking-tight leading-[0.95] text-[clamp(2.75rem,5.5vw,5.5rem)]"
-            >
-              Travel Beyond
-              <br />
-              <span className="italic font-serif opacity-90">The</span>{' '}
-              <span className="text-accent font-serif">Ordinary.</span>
-            </h1>
+            {/* Main Headline with Mountain Peak Doodle Accent */}
+            <div className="flex items-end gap-3 mb-6">
+              <h1
+                ref={headlineRef}
+                className="text-display text-foreground font-serif tracking-tight leading-[0.95] text-[clamp(2.75rem,5.5vw,5.5rem)]"
+              >
+                Travel Beyond
+                <br />
+                <span className="italic font-serif opacity-90">The</span>{' '}
+                <span className="text-accent font-serif">Ordinary.</span>
+              </h1>
+              <div className="hidden sm:block pb-2 pointer-events-none opacity-75 flex-shrink-0">
+                <MountainPeaksDoodle className="w-20 h-14 text-accent/80" />
+              </div>
+            </div>
 
             {/* Supporting Text */}
             <p
@@ -247,15 +305,15 @@ export default function HeroSection() {
 
               {/* FLOATING UI CARD 3: Bottom-Right Traveler Social Proof */}
               <div className="absolute bottom-4 right-4 sm:right-8 z-20 backdrop-blur-md bg-white/95 px-4 py-2.5 rounded-full shadow-lg border border-black/5 flex items-center gap-3">
-                <div className="flex -space-x-2 overflow-hidden">
-                  <div className="inline-block h-7 w-7 rounded-full ring-2 ring-white overflow-hidden relative">
-                    <Image src="/images/testimonial-traveler.jpg" alt="Happy traveler" fill className="object-cover" />
+                <div className="flex -space-x-1.5 overflow-hidden">
+                  <div className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-accent text-white font-bold text-[10px] flex items-center justify-center">
+                    OW
                   </div>
-                  <div className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-accent text-white font-semibold text-[10px] flex items-center justify-center">
-                    AK
+                  <div className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-emerald-600 text-white font-bold text-[10px] flex items-center justify-center">
+                    ✓
                   </div>
-                  <div className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-foreground text-white font-semibold text-[10px] flex items-center justify-center">
-                    +1K
+                  <div className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-foreground text-white font-bold text-[9px] flex items-center justify-center">
+                    +10K
                   </div>
                 </div>
                 <div className="text-[11px]">
@@ -267,6 +325,170 @@ export default function HeroSection() {
             </div>
           </div>
 
+        </div>
+
+        {/* QUICK TRAVEL FINDER / ENQUIRY INTERFACE */}
+        <div className="mb-14 -mt-4 relative z-20">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-black/[0.08] max-w-5xl mx-auto">
+            {/* Header label & tabs */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-black/[0.06] mb-6">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-accent block">Quick Travel Finder</span>
+                <h3 className="text-lg font-bold text-foreground">Find Your Journey or Service</h3>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { id: 'holidays', label: 'Holiday Packages', icon: <Palmtree className="w-3.5 h-3.5" /> },
+                  { id: 'umrah', label: 'Umrah Pilgrimage', icon: <MoonStar className="w-3.5 h-3.5" /> },
+                  { id: 'flights', label: 'Flight Tickets', icon: <Plane className="w-3.5 h-3.5" /> },
+                  { id: 'visas', label: 'Visa Assistance', icon: <ShieldCheck className="w-3.5 h-3.5" /> },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      setActiveTab(tab.id as any)
+                      setDestination('')
+                    }}
+                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold tracking-wide transition-all duration-200"
+                    style={{
+                      background: activeTab === tab.id ? 'var(--accent)' : 'var(--background-soft)',
+                      color: activeTab === tab.id ? 'white' : 'var(--foreground)',
+                    }}
+                  >
+                    {tab.icon}
+                    <span>{tab.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Form Fields Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              {/* Field 1: Destination / Service */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] font-bold uppercase tracking-wider text-muted flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-accent" />
+                  {activeTab === 'holidays' ? 'Destination' : activeTab === 'umrah' ? 'Package Type' : activeTab === 'flights' ? 'Flying To / Sector' : 'Country of Visa'}
+                </label>
+                <select
+                  value={destination}
+                  onChange={(e) => setDestination(e.target.value)}
+                  className="w-full h-11 px-3.5 rounded-xl border border-black/15 bg-background text-xs sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent font-medium cursor-pointer"
+                >
+                  {activeTab === 'holidays' && (
+                    <>
+                      <option value="">Select Destination</option>
+                      <option value="Thailand (Phuket & Krabi)">Thailand (Phuket & Krabi)</option>
+                      <option value="Bali Island Paradise">Bali Island Paradise</option>
+                      <option value="Maldives Luxury Resort">Maldives Luxury Resort</option>
+                      <option value="Kazakhstan Mountain Explorer">Kazakhstan Mountain Explorer</option>
+                      <option value="Lakshadweep Island Coral Voyage">Lakshadweep Islands</option>
+                      <option value="Kashmir Valley & Gulmarg">Kashmir & Gulmarg</option>
+                      <option value="Himachal & Manali Adventure">Himachal Pradesh</option>
+                      <option value="Meghalaya & Northeast">Meghalaya & Northeast</option>
+                      <option value="Dubai & UAE Explorer">Dubai & UAE</option>
+                      <option value="Malaysia & Singapore">Malaysia & Singapore</option>
+                      <option value="Vietnam Heritage Circuit">Vietnam Heritage</option>
+                      <option value="Sri Lanka Tropical Escape">Sri Lanka Escape</option>
+                    </>
+                  )}
+                  {activeTab === 'umrah' && (
+                    <>
+                      <option value="Executive Umrah Package (Direct Flight from Calicut)">Executive Umrah (Direct Flight from Calicut)</option>
+                      <option value="Premium 5-Star Umrah (Near Haram Clock Tower)">Premium 5-Star (Near Haram Clock Tower)</option>
+                      <option value="Deluxe Family Umrah (Makkah & Madinah)">Deluxe Family Umrah (Makkah & Madinah)</option>
+                      <option value="Custom Group Umrah with Guided Ziyarat">Custom Group Umrah with Guided Ziyarat</option>
+                      <option value="Ramadan Special Umrah">Ramadan Special Umrah</option>
+                    </>
+                  )}
+                  {activeTab === 'flights' && (
+                    <>
+                      <option value="Calicut (CCJ) to Gulf / Middle East">Calicut (CCJ) to Gulf / Middle East</option>
+                      <option value="Direct Flight to Southeast Asia">Direct Flight to Southeast Asia</option>
+                      <option value="International Long-Haul (UK, Europe, USA)">International Long-Haul (UK, Europe, USA)</option>
+                      <option value="Domestic India (Delhi, Mumbai, Bengaluru)">Domestic India Flight</option>
+                      <option value="Multi-City Custom Routing">Multi-City / Round Trip</option>
+                    </>
+                  )}
+                  {activeTab === 'visas' && (
+                    <>
+                      <option value="UAE / Dubai Tourist Visa">UAE / Dubai Tourist Visa</option>
+                      <option value="Saudi Arabia Tourist / Umrah Visa">Saudi Arabia Tourist / Umrah Visa</option>
+                      <option value="Schengen Europe Visa Consultation">Schengen Europe Visa</option>
+                      <option value="UK Standard Visitor Visa">UK Standard Visitor Visa</option>
+                      <option value="Thailand / Malaysia / Singapore eVisa">Southeast Asia eVisa</option>
+                      <option value="USA / Canada Visa Appointment & Filing">USA / Canada Visa Consultation</option>
+                    </>
+                  )}
+                </select>
+              </div>
+
+              {/* Field 2: Preferred Month */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] font-bold uppercase tracking-wider text-muted flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-accent" />
+                  Travel Month
+                </label>
+                <select
+                  value={travelMonth}
+                  onChange={(e) => setTravelMonth(e.target.value)}
+                  className="w-full h-11 px-3.5 rounded-xl border border-black/15 bg-background text-xs sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent font-medium cursor-pointer"
+                >
+                  <option value="Flexible / Next 30 Days">Flexible / Next 30 Days</option>
+                  <option value="This Month">This Month</option>
+                  <option value="Next Month">Next Month</option>
+                  <option value="Upcoming Holiday Season">Upcoming Holiday Season</option>
+                  <option value="Summer Holidays">Summer Holidays</option>
+                  <option value="Winter / New Year">Winter / New Year</option>
+                </select>
+              </div>
+
+              {/* Field 3: Travellers */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] font-bold uppercase tracking-wider text-muted flex items-center gap-1.5">
+                  <Users className="w-3.5 h-3.5 text-accent" />
+                  Travellers
+                </label>
+                <select
+                  value={travellers}
+                  onChange={(e) => setTravellers(e.target.value)}
+                  className="w-full h-11 px-3.5 rounded-xl border border-black/15 bg-background text-xs sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent font-medium cursor-pointer"
+                >
+                  <option value="1 Solo Traveller">1 Solo Traveller</option>
+                  <option value="2 Travellers (Couple / Friends)">2 Travellers (Couple / Friends)</option>
+                  <option value="Family (2 Adults + 1 Child)">Family (2 Adults + 1 Child)</option>
+                  <option value="Family (2 Adults + 2+ Children)">Family (2 Adults + 2+ Children)</option>
+                  <option value="Small Group (4-8 Travellers)">Small Group (4-8 Travellers)</option>
+                  <option value="Large Group / Corporate (9+ Travellers)">Large Group (9+ Travellers)</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Bottom Actions */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-black/[0.06]">
+              <div className="text-xs text-muted flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Instant response from our Puthiyara, Calicut travel desk · IATA Accredited</span>
+              </div>
+              <div className="flex items-center gap-3 w-full sm:w-auto">
+                <Link
+                  href={activeTab === 'holidays' ? '/journeys' : '/services'}
+                  className="btn btn-outline text-xs py-2.5 px-5 flex-1 sm:flex-initial text-center"
+                >
+                  Browse Catalog
+                </Link>
+                <button
+                  onClick={handleQuickEnquiry}
+                  className="btn btn-accent text-xs py-2.5 px-6 shadow-md shadow-accent/20 flex items-center justify-center gap-2 flex-1 sm:flex-initial"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                  </svg>
+                  <span>Enquire via WhatsApp</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* BOTTOM DISCOVERY STRIP: Horizontal Package & Destination Cards */}

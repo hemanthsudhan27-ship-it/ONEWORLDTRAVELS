@@ -1,9 +1,7 @@
 import type { Metadata } from 'next'
 import { DM_Sans, DM_Serif_Display } from 'next/font/google'
 import './globals.css'
-import Navbar from '@/components/navigation/Navbar'
-import Footer from '@/components/layout/Footer'
-import WhatsAppButton from '@/components/ui/WhatsAppButton'
+import SiteShell from '@/components/layout/SiteShell'
 
 const dmSans = DM_Sans({
   variable: '--font-dm-sans',
@@ -62,10 +60,7 @@ export default function RootLayout({
       className={`${dmSans.variable} ${dmSerifDisplay.variable} h-full`}
     >
       <body className="min-h-full flex flex-col antialiased" style={{ fontFamily: 'var(--font-dm-sans), system-ui, sans-serif' }}>
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <WhatsAppButton />
+        <SiteShell>{children}</SiteShell>
       </body>
     </html>
   )

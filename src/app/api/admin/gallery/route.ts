@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server'
+import { promises as fs } from 'fs'
+import path from 'path'
 import type { GalleryItem } from '@/lib/data/gallery'
+
+export const dynamic = 'force-dynamic'
 
 const OWNER = process.env.GITHUB_REPO_OWNER || 'hemanthsudhan27-ship-it'
 const REPO = process.env.GITHUB_REPO_NAME || 'ONEWORLDTRAVELS'
@@ -8,10 +12,12 @@ const TOKEN = process.env.GITHUB_PAT
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Oneworldtravels@adminpassowrd'
 
 const GALLERY_JSON_PATH = 'src/lib/data/gallery.json'
+const LOCAL_GALLERY_JSON_PATH = path.join(process.cwd(), GALLERY_JSON_PATH)
 
 // Helper to fetch file content and SHA from GitHub
-async function getGitHubFile(path: string) {
-  const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`
+async function getGitHubFile(filePath: string) {
+  if (!TOKEN) return null
+  const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${filePath}?ref=${BRANCH}`
   const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${TOKEN}`,
@@ -29,12 +35,13 @@ async function getGitHubFile(path: string) {
 
 // Helper to commit file changes to GitHub
 async function putGitHubFile(
-  path: string,
+  filePath: string,
   contentBase64: string,
   message: string,
   sha?: string
 ) {
-  const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`
+  if (!TOKEN) return null
+  const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${filePath}`
   const body: Record<string, unknown> = {
     message,
     content: contentBase64,
@@ -57,23 +64,51 @@ async function putGitHubFile(
 
   if (!res.ok) {
     const errorText = await res.text()
-    throw new Error(`Failed to commit ${path}: ${errorText}`)
+    throw new Error(`Failed to commit ${filePath}: ${errorText}`)
   }
   return await res.json()
 }
 
-// GET: Fetch current gallery items from GitHub
+// Read local gallery
+async function readLocalGallery(): Promise<GalleryItem[]> {
+  try {
+    const raw = await fs.readFile(LOCAL_GALLERY_JSON_PATH, 'utf-8')
+    return JSON.parse(raw) as GalleryItem[]
+  } catch {
+    return []
+  }
+}
+
+// Write local gallery
+async function writeLocalGallery(items: GalleryItem[]) {
+  try {
+    await fs.writeFile(LOCAL_GALLERY_JSON_PATH, JSON.stringify(items, null, 2), 'utf-8')
+  } catch (err) {
+    console.warn('Failed to write local gallery file:', err)
+  }
+}
+
+// GET: Fetch current gallery items
 export async function GET() {
   try {
-    const file = await getGitHubFile(GALLERY_JSON_PATH)
-    if (!file || !file.content) {
-      return NextResponse.json({ items: [] })
+    if (TOKEN) {
+      try {
+        const file = await getGitHubFile(GALLERY_JSON_PATH)
+        if (file && file.content) {
+          const decoded = Buffer.from(file.content, 'base64').toString('utf-8')
+          const items = JSON.parse(decoded)
+          await writeLocalGallery(items)
+          return NextResponse.json({ items })
+        }
+      } catch (ghErr) {
+        console.warn('GitHub fetch failed, falling back to local file:', ghErr)
+      }
     }
-    const decoded = Buffer.from(file.content, 'base64').toString('utf-8')
-    const items = JSON.parse(decoded)
-    return NextResponse.json({ items })
+
+    const localItems = await readLocalGallery()
+    return NextResponse.json({ items: localItems })
   } catch (error: any) {
-    console.error('Error fetching gallery items from GitHub:', error)
+    console.error('Error fetching gallery items:', error)
     return NextResponse.json(
       { error: error?.message || 'Failed to fetch items' },
       { status: 500 }
@@ -88,13 +123,6 @@ export async function POST(req: Request) {
     const pass = authHeader?.replace('Bearer ', '')
     if (pass !== ADMIN_PASSWORD) {
       return NextResponse.json({ error: 'Unauthorized: Invalid password' }, { status: 401 })
-    }
-
-    if (!TOKEN) {
-      return NextResponse.json(
-        { error: 'GitHub PAT is not configured in environment variables' },
-        { status: 500 }
-      )
     }
 
     const formData = await req.formData()
@@ -122,26 +150,47 @@ export async function POST(req: Request) {
     const fileName = `${uniqueId}-${cleanName}.${ext}`
     const imagePath = `public/images/gallery/${fileName}`
 
-    // 1. Commit the image file to GitHub
-    await putGitHubFile(
-      imagePath,
-      base64Image,
-      `admin(gallery): upload image ${fileName}`
-    )
+    // 1. Commit the image file to GitHub if TOKEN configured
+    if (TOKEN) {
+      try {
+        await putGitHubFile(
+          imagePath,
+          base64Image,
+          `admin(gallery): upload image ${fileName}`
+        )
+      } catch (ghErr) {
+        console.warn('GitHub image commit failed, continuing local write:', ghErr)
+      }
+    }
+
+    // Write image locally to public/images/gallery
+    try {
+      const localImagePath = path.join(process.cwd(), imagePath)
+      await fs.mkdir(path.dirname(localImagePath), { recursive: true })
+      await fs.writeFile(localImagePath, buffer)
+    } catch (fsErr) {
+      console.warn('Could not save image to local filesystem:', fsErr)
+    }
 
     // 2. Fetch existing gallery.json
-    const galleryJsonFile = await getGitHubFile(GALLERY_JSON_PATH)
     let currentItems: GalleryItem[] = []
     let currentSha: string | undefined = undefined
 
-    if (galleryJsonFile && galleryJsonFile.content) {
-      currentSha = galleryJsonFile.sha
-      const decoded = Buffer.from(galleryJsonFile.content, 'base64').toString('utf-8')
+    if (TOKEN) {
       try {
-        currentItems = JSON.parse(decoded)
+        const galleryJsonFile = await getGitHubFile(GALLERY_JSON_PATH)
+        if (galleryJsonFile && galleryJsonFile.content) {
+          currentSha = galleryJsonFile.sha
+          const decoded = Buffer.from(galleryJsonFile.content, 'base64').toString('utf-8')
+          currentItems = JSON.parse(decoded)
+        }
       } catch {
         currentItems = []
       }
+    }
+
+    if (currentItems.length === 0) {
+      currentItems = await readLocalGallery()
     }
 
     const newItem: GalleryItem = {
@@ -156,23 +205,30 @@ export async function POST(req: Request) {
 
     // Add new item to front of gallery
     const updatedItems = [newItem, ...currentItems]
-    const updatedJsonBase64 = Buffer.from(
-      JSON.stringify(updatedItems, null, 2),
-      'utf-8'
-    ).toString('base64')
+    const updatedJsonString = JSON.stringify(updatedItems, null, 2)
 
-    // 3. Commit updated gallery.json
-    await putGitHubFile(
-      GALLERY_JSON_PATH,
-      updatedJsonBase64,
-      `admin(gallery): add ${newItem.caption || fileName} to gallery.json`,
-      currentSha
-    )
+    // 3. Commit updated gallery.json to GitHub
+    if (TOKEN) {
+      try {
+        const updatedJsonBase64 = Buffer.from(updatedJsonString, 'utf-8').toString('base64')
+        await putGitHubFile(
+          GALLERY_JSON_PATH,
+          updatedJsonBase64,
+          `admin(gallery): add ${newItem.caption || fileName} to gallery.json`,
+          currentSha
+        )
+      } catch (ghErr) {
+        console.warn('GitHub JSON commit failed:', ghErr)
+      }
+    }
+
+    // Always write updated JSON to local filesystem
+    await writeLocalGallery(updatedItems)
 
     return NextResponse.json({
       success: true,
       item: newItem,
-      message: 'Image uploaded and committed to GitHub successfully!',
+      message: 'Image uploaded and saved successfully!',
     })
   } catch (error: any) {
     console.error('Upload error:', error)
@@ -197,58 +253,85 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: 'Missing image ID' }, { status: 400 })
     }
 
-    // 1. Get gallery.json
-    const galleryJsonFile = await getGitHubFile(GALLERY_JSON_PATH)
-    if (!galleryJsonFile || !galleryJsonFile.content) {
-      return NextResponse.json({ error: 'Gallery file not found' }, { status: 404 })
+    let items: GalleryItem[] = []
+    let currentSha: string | undefined = undefined
+
+    if (TOKEN) {
+      try {
+        const galleryJsonFile = await getGitHubFile(GALLERY_JSON_PATH)
+        if (galleryJsonFile && galleryJsonFile.content) {
+          currentSha = galleryJsonFile.sha
+          const decoded = Buffer.from(galleryJsonFile.content, 'base64').toString('utf-8')
+          items = JSON.parse(decoded)
+        }
+      } catch {
+        items = []
+      }
     }
 
-    const decoded = Buffer.from(galleryJsonFile.content, 'base64').toString('utf-8')
-    const items: GalleryItem[] = JSON.parse(decoded)
-    const targetItem = items.find((item) => item.id === id)
+    if (items.length === 0) {
+      items = await readLocalGallery()
+    }
 
+    const targetItem = items.find((item) => item.id === id)
     if (!targetItem) {
       return NextResponse.json({ error: 'Item not found in gallery' }, { status: 404 })
     }
 
     const updatedItems = items.filter((item) => item.id !== id)
-    const updatedJsonBase64 = Buffer.from(
-      JSON.stringify(updatedItems, null, 2),
-      'utf-8'
-    ).toString('base64')
+    const updatedJsonString = JSON.stringify(updatedItems, null, 2)
 
-    // Commit updated gallery.json
-    await putGitHubFile(
-      GALLERY_JSON_PATH,
-      updatedJsonBase64,
-      `admin(gallery): remove item ${id}`,
-      galleryJsonFile.sha
-    )
+    // Commit updated gallery.json to GitHub
+    if (TOKEN) {
+      try {
+        const updatedJsonBase64 = Buffer.from(updatedJsonString, 'utf-8').toString('base64')
+        await putGitHubFile(
+          GALLERY_JSON_PATH,
+          updatedJsonBase64,
+          `admin(gallery): remove item ${id}`,
+          currentSha
+        )
+      } catch (ghErr) {
+        console.warn('GitHub commit failed on delete:', ghErr)
+      }
+    }
 
-    // Optional: Delete physical image file from GitHub if it's in public/images/gallery
+    // Write local JSON
+    await writeLocalGallery(updatedItems)
+
+    // Optional: Delete physical image file from GitHub and local
     if (targetItem.src.startsWith('/images/gallery/')) {
       const filePath = `public${targetItem.src}`
-      try {
-        const fileToDelete = await getGitHubFile(filePath)
-        if (fileToDelete && fileToDelete.sha) {
-          const deleteUrl = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${filePath}`
-          await fetch(deleteUrl, {
-            method: 'DELETE',
-            headers: {
-              Authorization: `Bearer ${TOKEN}`,
-              Accept: 'application/vnd.github.v3+json',
-              'Content-Type': 'application/json',
-              'User-Agent': 'OneWorldTravels-Admin',
-            },
-            body: JSON.stringify({
-              message: `admin(gallery): delete image file ${filePath}`,
-              sha: fileToDelete.sha,
-              branch: BRANCH,
-            }),
-          })
+      if (TOKEN) {
+        try {
+          const fileToDelete = await getGitHubFile(filePath)
+          if (fileToDelete && fileToDelete.sha) {
+            const deleteUrl = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${filePath}`
+            await fetch(deleteUrl, {
+              method: 'DELETE',
+              headers: {
+                Authorization: `Bearer ${TOKEN}`,
+                Accept: 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json',
+                'User-Agent': 'OneWorldTravels-Admin',
+              },
+              body: JSON.stringify({
+                message: `admin(gallery): delete image file ${filePath}`,
+                sha: fileToDelete.sha,
+                branch: BRANCH,
+              }),
+            })
+          }
+        } catch (err) {
+          console.warn('Could not delete image file on GitHub:', err)
         }
-      } catch (err) {
-        console.warn('Could not delete image file on GitHub (might not exist):', err)
+      }
+
+      try {
+        const localPath = path.join(process.cwd(), filePath)
+        await fs.unlink(localPath)
+      } catch {
+        // file might not exist locally
       }
     }
 
