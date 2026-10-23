@@ -1,17 +1,5 @@
 [
   {
-    "id": "review-1792781022383",
-    "author": "Test User",
-    "location": "Calicut",
-    "journey": "Curated Journey",
-    "quote": "Great trip with One World Travels!",
-    "rating": 5,
-    "date": "2026-10",
-    "image": "",
-    "verified": true,
-    "createdAt": "2026-10-23T18:43:42.383Z"
-  },
-  {
     "id": "review-1792781012100",
     "author": "Admin Tester",
     "location": "Calicut, Kerala",
