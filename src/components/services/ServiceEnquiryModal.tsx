@@ -447,10 +447,10 @@ export default function ServiceEnquiryModal({
                 </span>
                 <div className="flex items-center gap-3">
                   <a
-                    href="tel:+919072329992"
+                    href="tel:+919746299992"
                     className="font-medium text-gray-800 hover:text-[var(--accent)] transition-colors underline decoration-dotted"
                   >
-                    +91 907 2329 992
+                    +91 9746 299 992
                   </a>
                   <span>·</span>
                   <a

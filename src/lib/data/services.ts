@@ -162,16 +162,17 @@ export const servicesData: Service[] = [
 ]
 
 export const companyDetails = {
-  name: 'One World Travel & Tours',
+  name: 'Oneworld Travel and Tours',
   tagline: 'Connecting Globally',
   accreditations: [
-    { code: 'IATA', label: 'IATA Accredited Agent', description: 'International Air Transport Association certification for global airline ticketing authority.' },
+    { code: 'IATA', label: 'IATA Accredited Agent (Since 2020)', description: 'International Air Transport Association certification for direct global airline ticketing authority.' },
     { code: 'TAFI', label: 'TAFI Member', description: 'Travel Agents Federation of India member — The Way Forward.' },
   ],
   phones: [
-    { display: '+91 907 2329 992', raw: '919072329992', primary: true },
+    { display: '+91 9746 299 992', raw: '919746299992', primary: true },
     { display: '+91 952 6617 757', raw: '919526617757', primary: false },
   ],
-  email: 'hello@oneworld.travel',
-  address: 'Puthiyara, Calicut (Kozhikode), Kerala, India',
+  email: 'Calicut@oneworldtravel.co.in',
+  address: '27/19, First Floor, Zam Zam Building, Mini Bypass Road, Puthiyara, Calicut (Kozhikode), Kerala',
+  branch: 'Dubai, UAE',
 }

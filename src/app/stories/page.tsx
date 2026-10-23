@@ -20,31 +20,24 @@ export default function StoriesPage() {
   const [featured, ...rest] = stories
 
   return (
-    <div>
-      {/* Hero */}
-      <section
-        className="section-padding"
-        style={{ background: 'var(--background-soft)' }}
-        aria-label="Travel Stories"
-      >
-        <div className="container-wide">
-          <div className="flex items-center gap-3 mb-8">
-            <span className="accent-dot" aria-hidden="true" />
-            <span className="text-label text-xs" style={{ color: 'var(--muted)' }}>Stories</span>
-          </div>
-          <h1 className="text-headline mb-6">
-            Dispatches from
-            <br />
-            <span style={{ color: 'var(--accent)' }}>the road.</span>
+    <div className="pt-20 sm:pt-24">
+      {/* Compact Top Header — Stories listed first */}
+      <div className="container-wide py-3 sm:py-4 border-b border-black/[0.06] flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <h1 className="text-xl sm:text-2xl font-serif font-bold text-foreground">
+            Travel Journal &amp; Stories
           </h1>
-          <p className="text-body max-w-md">
-            Essays, journals, and stories from the journeys we&apos;ve been part of. Written honestly.
-          </p>
+          <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-accent/10 text-accent font-semibold hidden sm:inline-block">
+            {stories.length} Dispatches
+          </span>
         </div>
-      </section>
+        <Link href="/packages" className="btn btn-outline text-xs px-3.5 py-1.5">
+          Explore Packages →
+        </Link>
+      </div>
 
-      {/* Featured Story */}
-      <section className="section-padding" aria-label="Featured story">
+      {/* Featured Story & Collection — starts right away! */}
+      <section className="py-6 sm:py-8" aria-label="Featured story">
         <div className="container-wide">
           <Link
             href={`/stories/${featured.slug}`}

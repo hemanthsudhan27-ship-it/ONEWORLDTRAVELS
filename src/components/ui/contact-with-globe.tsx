@@ -17,15 +17,17 @@ import type {
 import type { GeoPermissibleObjects } from "d3";
 import { journeys } from "@/lib/data/journeys";
 
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
+
 const smoothEase = [0.25, 0.1, 0.25, 1] as const;
 
 const CONTACT_LINKS = [
   {
     icon: Mail,
-    label: "hello@oneworld.travel",
-    href: "mailto:hello@oneworld.travel",
+    label: "Calicut@oneworldtravel.co.in",
+    href: "mailto:Calicut@oneworldtravel.co.in",
   },
-  { icon: Phone, label: "+91 907 2329 992", href: "tel:+919072329992" },
+  { icon: Phone, label: "+91 9746 299 992", href: "tel:+919746299992" },
   {
     icon: Phone,
     label: "+91 952 6617 757",
@@ -702,6 +704,26 @@ export default function ContactWithGlobe({
   description = "We are always looking for ways to improve our products and services. Contact us and let us know how we can help you.",
   className,
 }: ContactWithGlobeProps) {
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    destination: "General Enquiry",
+    message: "",
+  });
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name.trim() || !form.phone.trim()) {
+      alert("Please provide your name and contact phone number.");
+      return;
+    }
+    const text = `Hello One World Travel & Tours, I would like to get in touch:\n*Name*: ${form.name}\n*Phone*: ${form.phone}${form.email ? `\n*Email*: ${form.email}` : ''}\n*Interested In*: ${form.destination}\n*Message*: ${form.message || 'I would like to plan a trip with One World Travel.'}`;
+    setSubmitted(true);
+    window.open(buildWhatsAppUrl(text), "_blank");
+  };
+
   return (
     <section
       className={cn(
@@ -757,8 +779,7 @@ export default function ContactWithGlobe({
                 Get in touch
               </h3>
               <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-xs">
-                Reach out via any channel below. We typically reply within one
-                business day.
+                Reach out via any channel below. We typically reply within one business day.
               </p>
             </div>
 
@@ -810,86 +831,116 @@ export default function ContactWithGlobe({
                 Send a message
               </h3>
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                Fill out the form and we'll get back to you promptly.
+                Fill out the form and we&apos;ll get back to you promptly.
               </p>
             </div>
 
             <FormDots />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400 dark:text-zinc-500">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  placeholder="Ahdeetai"
-                  className="w-full bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-zinc-800 dark:text-zinc-200 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 outline-none focus:border-rose-400 dark:focus:border-rose-500/50 focus:ring-2 focus:ring-rose-500/10 transition-all duration-200"
-                />
+            {submitted ? (
+              <div className="py-8 text-center space-y-3">
+                <p className="text-sm font-semibold text-emerald-600">
+                  ✓ Enquiry prepared for WhatsApp!
+                </p>
+                <p className="text-xs text-zinc-500">
+                  Our Puthiyara, Calicut travel desk will assist you right away.
+                </p>
+                <Button
+                  onClick={() => setSubmitted(false)}
+                  variant="outline"
+                  className="rounded-xl text-xs mt-2"
+                >
+                  Send another message
+                </Button>
               </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400 dark:text-zinc-500">
-                  Phone Number
-                </label>
-                <input
-                  type="tel"
-                  placeholder="+91 98765 43210"
-                  className="w-full bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-zinc-800 dark:text-zinc-200 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 outline-none focus:border-rose-400 dark:focus:border-rose-500/50 focus:ring-2 focus:ring-rose-500/10 transition-all duration-200"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400 dark:text-zinc-500">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  placeholder="hello@example.com"
-                  className="w-full bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-zinc-800 dark:text-zinc-200 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 outline-none focus:border-rose-400 dark:focus:border-rose-500/50 focus:ring-2 focus:ring-rose-500/10 transition-all duration-200"
-                />
-              </div>
-              
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400 dark:text-zinc-500">
-                  Interested In
-                </label>
-                <div className="relative">
-                  <select
-                    defaultValue=""
-                    className="w-full bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-zinc-800 dark:text-zinc-200 outline-none focus:border-rose-400 dark:focus:border-rose-500/50 focus:ring-2 focus:ring-rose-500/10 transition-all duration-200 appearance-none"
-                  >
-                    <option value="" disabled>Select a destination</option>
-                    <option value="general">General Enquiry</option>
-                    {journeys.map((j) => (
-                      <option key={j.id} value={j.id}>
-                        {j.title}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-zinc-500">
-                    <svg className="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400 dark:text-zinc-500">
+                      Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Rahul Sharma"
+                      value={form.name}
+                      onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      className="w-full bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-zinc-800 dark:text-zinc-200 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 outline-none focus:border-rose-400 dark:focus:border-rose-500/50 focus:ring-2 focus:ring-rose-500/10 transition-all duration-200"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400 dark:text-zinc-500">
+                      Phone Number *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      placeholder="+91 9746 299 992"
+                      value={form.phone}
+                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                      className="w-full bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-zinc-800 dark:text-zinc-200 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 outline-none focus:border-rose-400 dark:focus:border-rose-500/50 focus:ring-2 focus:ring-rose-500/10 transition-all duration-200"
+                    />
                   </div>
                 </div>
-              </div>
-            </div>
 
-            <div className="flex flex-col gap-2">
-              <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400 dark:text-zinc-500">
-                Message
-              </label>
-              <textarea
-                placeholder="Type your message here"
-                rows={4}
-                className="w-full bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl px-4 py-3 text-sm text-zinc-800 dark:text-zinc-200 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 outline-none focus:border-rose-400 dark:focus:border-rose-500/50 focus:ring-2 focus:ring-rose-500/10 resize-none transition-all duration-200"
-              />
-            </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400 dark:text-zinc-500">
+                      Email Address (Optional)
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="hello@example.com"
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      className="w-full bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-zinc-800 dark:text-zinc-200 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 outline-none focus:border-rose-400 dark:focus:border-rose-500/50 focus:ring-2 focus:ring-rose-500/10 transition-all duration-200"
+                    />
+                  </div>
+                  
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400 dark:text-zinc-500">
+                      Interested In
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={form.destination}
+                        onChange={(e) => setForm({ ...form, destination: e.target.value })}
+                        className="w-full bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-zinc-800 dark:text-zinc-200 outline-none focus:border-rose-400 dark:focus:border-rose-500/50 focus:ring-2 focus:ring-rose-500/10 transition-all duration-200 appearance-none"
+                      >
+                        <option value="General Enquiry">General Enquiry</option>
+                        {journeys.map((j) => (
+                          <option key={j.id} value={j.title}>
+                            {j.title}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-zinc-500">
+                        <svg className="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-            <Button className="w-fit h-11 px-8 rounded-xl font-semibold text-sm bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-100 text-white dark:text-zinc-900 group">
-              Submit
-              <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
-            </Button>
+                <div className="flex flex-col gap-2">
+                  <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400 dark:text-zinc-500">
+                    Message
+                  </label>
+                  <textarea
+                    placeholder="Type your message or travel plans here..."
+                    rows={4}
+                    value={form.message}
+                    onChange={(e) => setForm({ ...form, message: e.target.value })}
+                    className="w-full bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl px-4 py-3 text-sm text-zinc-800 dark:text-zinc-200 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 outline-none focus:border-rose-400 dark:focus:border-rose-500/50 focus:ring-2 focus:ring-rose-500/10 resize-none transition-all duration-200"
+                  />
+                </div>
+
+                <Button type="submit" className="w-fit h-11 px-8 rounded-xl font-semibold text-sm bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-100 text-white dark:text-zinc-900 group cursor-pointer">
+                  Submit via WhatsApp
+                  <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
+                </Button>
+              </form>
+            )}
           </motion.div>
         </div>
       </div>

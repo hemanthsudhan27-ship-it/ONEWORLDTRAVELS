@@ -3,12 +3,12 @@
  * Primary contact details from Puthiyara, Calicut office.
  */
 
-export const PRIMARY_PHONE = "+91 907 2329 992"
+export const PRIMARY_PHONE = "+91 9746 299 992"
 export const SECONDARY_PHONE = "+91 952 6617 757"
-export const OFFICE_LOCATION = "Puthiyara, Calicut, Kerala, India"
+export const OFFICE_LOCATION = "27/19, First Floor, Zam Zam Building, Mini Bypass Road, Puthiyara, Calicut, Kerala"
 
 // Primary WhatsApp number (normalized for wa.me)
-export const WHATSAPP_NUMBER = "919072329992"
+export const WHATSAPP_NUMBER = "919746299992"
 export const WHATSAPP_NUMBER_ALT = "919526617757"
 export const WHATSAPP_BASE_URL = `https://wa.me/${WHATSAPP_NUMBER}`
 

@@ -248,13 +248,26 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { id } = await req.json()
+    let id: string | null = null
+    try {
+      const body = await req.json()
+      id = body?.id
+    } catch {
+      // not JSON body
+    }
+    if (!id) {
+      const url = new URL(req.url)
+      id = url.searchParams.get('id')
+    }
+
     if (!id) {
       return NextResponse.json({ error: 'Missing image ID' }, { status: 400 })
     }
 
     let items: GalleryItem[] = []
     let currentSha: string | undefined = undefined
+
+    const localItems = await readLocalGallery()
 
     if (TOKEN) {
       try {
@@ -269,26 +282,25 @@ export async function DELETE(req: Request) {
       }
     }
 
-    if (items.length === 0) {
-      items = await readLocalGallery()
-    }
+    const targetItem =
+      items.find((item) => item.id === id || item.src === id) ||
+      localItems.find((item) => item.id === id || item.src === id)
 
-    const targetItem = items.find((item) => item.id === id)
     if (!targetItem) {
       return NextResponse.json({ error: 'Item not found in gallery' }, { status: 404 })
     }
 
-    const updatedItems = items.filter((item) => item.id !== id)
-    const updatedJsonString = JSON.stringify(updatedItems, null, 2)
+    const updatedGhItems = items.filter((item) => item.id !== targetItem.id && item.src !== targetItem.src)
+    const updatedLocalItems = localItems.filter((item) => item.id !== targetItem.id && item.src !== targetItem.src)
 
-    // Commit updated gallery.json to GitHub
-    if (TOKEN) {
+    // Commit updated gallery.json to GitHub if available
+    if (TOKEN && currentSha) {
       try {
-        const updatedJsonBase64 = Buffer.from(updatedJsonString, 'utf-8').toString('base64')
+        const updatedJsonBase64 = Buffer.from(JSON.stringify(updatedGhItems, null, 2), 'utf-8').toString('base64')
         await putGitHubFile(
           GALLERY_JSON_PATH,
           updatedJsonBase64,
-          `admin(gallery): remove item ${id}`,
+          `admin(gallery): remove item ${targetItem.id}`,
           currentSha
         )
       } catch (ghErr) {
@@ -297,7 +309,7 @@ export async function DELETE(req: Request) {
     }
 
     // Write local JSON
-    await writeLocalGallery(updatedItems)
+    await writeLocalGallery(updatedLocalItems)
 
     // Optional: Delete physical image file from GitHub and local
     if (targetItem.src.startsWith('/images/gallery/')) {

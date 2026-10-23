@@ -208,6 +208,103 @@ export async function POST(req: Request) {
   }
 }
 
+// PUT: Edit existing review
+export async function PUT(req: Request) {
+  try {
+    const authHeader = req.headers.get('authorization')
+    const pass = authHeader?.replace('Bearer ', '')
+    if (pass !== ADMIN_PASSWORD) {
+      return NextResponse.json({ error: 'Unauthorized: Invalid password' }, { status: 401 })
+    }
+
+    const body = await req.json()
+    const { id, author, location, journey, quote, rating, date, image, verified } = body
+
+    if (!id) {
+      return NextResponse.json({ error: 'Review ID is required for editing' }, { status: 400 })
+    }
+    if (!author?.trim()) {
+      return NextResponse.json({ error: 'Traveler name is required' }, { status: 400 })
+    }
+    if (!quote?.trim()) {
+      return NextResponse.json({ error: 'Review quote/feedback is required' }, { status: 400 })
+    }
+
+    let currentItems: Review[] = []
+    let currentSha: string | undefined = undefined
+    const localItems = await readLocalReviews()
+
+    if (TOKEN) {
+      try {
+        const ghFile = await getGitHubFile(REVIEWS_JSON_RELATIVE_PATH)
+        if (ghFile && ghFile.content) {
+          currentSha = ghFile.sha
+          const decoded = Buffer.from(ghFile.content, 'base64').toString('utf-8')
+          currentItems = JSON.parse(decoded)
+        }
+      } catch (err) {
+        console.warn('GitHub check error on edit:', err)
+      }
+    }
+
+    const existingInGh = currentItems.find((r) => r.id === id)
+    const existingInLocal = localItems.find((r) => r.id === id)
+    const existing = existingInGh || existingInLocal
+
+    if (!existing) {
+      return NextResponse.json({ error: 'Review not found' }, { status: 404 })
+    }
+
+    const updatedReview: Review = {
+      ...existing,
+      author: author.trim(),
+      location: location?.trim() || 'Traveler',
+      journey: journey?.trim() || 'Curated Journey',
+      quote: quote.trim(),
+      rating: Number(rating) || 5,
+      date: date?.trim() || existing.date || new Date().toISOString().slice(0, 7),
+      image: image !== undefined ? image.trim() : (existing.image || ''),
+      verified: verified !== false,
+      createdAt: existing.createdAt || new Date().toISOString(),
+    }
+
+    const updatedGhItems = currentItems.map((r) => (r.id === id ? updatedReview : r))
+    const updatedLocalItems = localItems.map((r) => (r.id === id ? updatedReview : r))
+    if (!localItems.some((r) => r.id === id)) {
+      updatedLocalItems.unshift(updatedReview)
+    }
+
+    if (TOKEN && currentSha && currentItems.some((r) => r.id === id)) {
+      try {
+        const updatedJsonBase64 = Buffer.from(JSON.stringify(updatedGhItems, null, 2), 'utf-8').toString('base64')
+        await putGitHubFile(
+          REVIEWS_JSON_RELATIVE_PATH,
+          updatedJsonBase64,
+          `admin(reviews): edit review ${id} by ${updatedReview.author}`,
+          currentSha
+        )
+      } catch (ghErr) {
+        console.warn('GitHub commit failed on edit:', ghErr)
+      }
+    }
+
+    // Always update local file
+    await writeLocalReviews(updatedLocalItems)
+
+    return NextResponse.json({
+      success: true,
+      item: updatedReview,
+      message: 'Review updated successfully!',
+    })
+  } catch (error: any) {
+    console.error('Review edit error:', error)
+    return NextResponse.json(
+      { error: error?.message || 'Failed to update review' },
+      { status: 500 }
+    )
+  }
+}
+
 // DELETE: Remove a review
 export async function DELETE(req: Request) {
   try {
@@ -217,13 +314,26 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { id } = await req.json()
+    let id: string | null = null
+    try {
+      const body = await req.json()
+      id = body?.id
+    } catch {
+      // not JSON body
+    }
+    if (!id) {
+      const url = new URL(req.url)
+      id = url.searchParams.get('id')
+    }
+
     if (!id) {
       return NextResponse.json({ error: 'Missing review ID' }, { status: 400 })
     }
 
     let currentItems: Review[] = []
     let currentSha: string | undefined = undefined
+
+    const localItems = await readLocalReviews()
 
     if (TOKEN) {
       try {
@@ -238,16 +348,12 @@ export async function DELETE(req: Request) {
       }
     }
 
-    if (currentItems.length === 0) {
-      currentItems = await readLocalReviews()
-    }
+    const updatedGhItems = currentItems.filter((item) => item.id !== id)
+    const updatedLocalItems = localItems.filter((item) => item.id !== id)
 
-    const updatedItems = currentItems.filter((item) => item.id !== id)
-    const updatedJsonString = JSON.stringify(updatedItems, null, 2)
-
-    if (TOKEN) {
+    if (TOKEN && currentSha && currentItems.length > 0) {
       try {
-        const updatedJsonBase64 = Buffer.from(updatedJsonString, 'utf-8').toString('base64')
+        const updatedJsonBase64 = Buffer.from(JSON.stringify(updatedGhItems, null, 2), 'utf-8').toString('base64')
         await putGitHubFile(
           REVIEWS_JSON_RELATIVE_PATH,
           updatedJsonBase64,
@@ -260,7 +366,7 @@ export async function DELETE(req: Request) {
     }
 
     // Always update local disk
-    await writeLocalReviews(updatedItems)
+    await writeLocalReviews(updatedLocalItems)
 
     return NextResponse.json({ success: true, message: 'Review deleted successfully' })
   } catch (error: any) {

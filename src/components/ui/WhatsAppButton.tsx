@@ -21,9 +21,10 @@ export default function WhatsAppButton() {
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Chat with One World Travel & Tours on WhatsApp — +91 907 2329 992"
+        aria-label="Chat with One World Travel & Tours on WhatsApp — +91 9746 299 992"
         title="Chat on WhatsApp"
-        className="relative flex items-center justify-center bg-[#25D366] text-white rounded-full shadow-xl group"
+        data-wa-btn="true"
+        className="relative flex items-center justify-center bg-[#25D366] text-white rounded-full shadow-xl group cursor-pointer"
         style={{
           width: 52,
           height: 52,
@@ -53,7 +54,7 @@ export default function WhatsAppButton() {
 
         {/* Tooltip */}
         <span
-          className="absolute right-full mr-3 text-white text-[11px] font-semibold py-1.5 px-3 rounded-lg shadow-lg whitespace-nowrap pointer-events-none"
+          className="absolute right-full mr-3 text-white text-[11px] font-semibold py-1.5 px-3 rounded-lg shadow-lg whitespace-nowrap pointer-events-none group-hover:opacity-100 group-hover:translate-x-0"
           style={{
             background: 'var(--foreground)',
             opacity: 0,

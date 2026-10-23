@@ -44,48 +44,33 @@ export default async function ReviewsPage() {
       : '5.0'
 
   return (
-    <div>
-      {/* Hero */}
-      <section
-        className="section-padding"
-        style={{ background: 'var(--background-soft)' }}
-        aria-label="Traveller reviews"
-      >
-        <div className="container-wide">
-          <div className="flex items-center gap-3 mb-8">
-            <span className="accent-dot" aria-hidden="true" />
-            <span className="text-label text-xs" style={{ color: 'var(--muted)' }}>Reviews</span>
-          </div>
-          <h1 className="text-headline mb-6">
-            What travellers
-            <br />
-            <span style={{ color: 'var(--accent)' }}>actually say.</span>
+    <div className="pt-20 sm:pt-24">
+      {/* Compact Top Header — Reviews listed right away */}
+      <div className="container-wide py-3 sm:py-4 border-b border-black/[0.06] flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <h1 className="text-xl sm:text-2xl font-serif font-bold text-foreground">
+            Traveler Reviews
           </h1>
-          <p className="text-body max-w-md">
-            Honest words from people who have journeyed with us. Real feedback from genuine travelers.
-          </p>
-
-          {/* Aggregate rating display if reviews exist */}
           {reviews.length > 0 && (
-            <div className="flex items-center gap-4 mt-10">
-              <div className="glass rounded-2xl px-6 py-4 flex items-center gap-4">
-                <div>
-                  <p className="text-3xl font-bold" style={{ letterSpacing: '-0.03em' }}>{avgRating}</p>
-                  <StarRating count={Math.round(Number(avgRating))} />
-                </div>
-                <div className="w-px h-10 bg-black/10" aria-hidden="true" />
-                <div>
-                  <p className="font-semibold text-sm">{reviews.length} {reviews.length === 1 ? 'review' : 'reviews'}</p>
-                  <p className="text-xs" style={{ color: 'var(--muted)' }}>All verified travellers</p>
-                </div>
-              </div>
+            <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-700 text-xs font-semibold">
+              <span>{avgRating}★</span>
+              <span>·</span>
+              <span>{reviews.length} Verified</span>
             </div>
           )}
         </div>
-      </section>
+        <a
+          href={buildWhatsAppUrl('Hello One World Travel! I would like to submit my review / travel feedback.')}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn btn-accent text-xs px-4 py-1.5"
+        >
+          Share Your Review →
+        </a>
+      </div>
 
-      {/* Reviews list / empty state */}
-      <section className="section-padding" aria-label="All reviews">
+      {/* Reviews list — starts right away */}
+      <section className="py-6 sm:py-8" aria-label="All reviews">
         <div className="container-wide">
           {reviews.length === 0 ? (
             <div className="max-w-xl mx-auto text-center py-16 px-8 rounded-3xl border border-black/5 bg-white/70 shadow-sm">
@@ -110,8 +95,8 @@ export default async function ReviewsPage() {
                 >
                   Share Your Review via WhatsApp →
                 </a>
-                <Link href="/journeys" className="btn btn-outline text-xs px-6 py-3">
-                  Browse Journeys
+                <Link href="/packages" className="btn btn-outline text-xs px-6 py-3">
+                  Browse Packages
                 </Link>
               </div>
             </div>
@@ -195,8 +180,8 @@ export default async function ReviewsPage() {
             >
               Plan My Journey →
             </a>
-            <Link href="/journeys" className="btn btn-outline">
-              Browse Journeys
+            <Link href="/packages" className="btn btn-outline">
+              Browse Packages
             </Link>
           </div>
         </div>

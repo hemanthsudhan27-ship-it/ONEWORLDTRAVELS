@@ -1,146 +1,244 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import {
+  Award,
+  ShieldCheck,
+  Plane,
+  MapPin,
+  Phone,
+  Mail,
+  Clock,
+  Compass,
+  CheckCircle2,
+  Globe2,
+  Users,
+} from 'lucide-react'
+import { buildGeneralEnquiryUrl } from '@/lib/whatsapp'
 
 export const metadata: Metadata = {
-  title: 'About — Travel, With Intention',
+  title: 'About Us — Oneworld Travel and Tours | Puthiyara, Calicut',
   description:
-    'One World was born from a simple belief: every traveller deserves a journey built around them. Learn our story, philosophy, and the team behind your next adventure.',
+    'Founded in 2019 by travel veteran Shahul Hameed (22+ years industry expertise). IATA Accredited Agent & TAFI Member in Puthiyara, Calicut with branch in Dubai. Direct ticketing and curated tour packages.',
   alternates: { canonical: 'https://oneworld.travel/about' },
   openGraph: {
-    title: 'About One World Travel',
-    description: 'We don\'t just plan trips. We create stories you take home.',
+    title: 'About Oneworld Travel and Tours — Puthiyara, Calicut & Dubai',
+    description:
+      'Founded in 2019 by Shahul Hameed (22+ years experience). IATA Accredited Agency in Puthiyara, Calicut.',
     url: 'https://oneworld.travel/about',
   },
 }
 
 const milestones = [
-  { year: '2016', event: 'Founded in Puthiyara, Calicut with a passion for personalized travel.' },
-  { year: '2018', event: 'First international journeys to Southeast Asia and Middle East.' },
-  { year: '2020', event: 'Accredited by IATA and TAFI for global airline ticketing authority.' },
-  { year: '2022', event: 'Reached 1,000+ curated journeys and Umrah pilgrimages.' },
-  { year: '2024', event: 'Expanded to 50+ global destinations across Asia, Middle East, and Europe.' },
-  { year: '2026', event: 'Trusted by thousands of happy travellers worldwide.' },
+  {
+    year: '2019',
+    title: 'Founding in Puthiyara, Calicut',
+    event:
+      'Oneworld Travel and Tours officially commenced operations in Puthiyara, Calicut, founded by industry veteran Shahul Hameed to deliver transparent, human-first travel planning.',
+  },
+  {
+    year: '2020',
+    title: 'IATA & TAFI Accreditation',
+    event:
+      'Achieved prestigious IATA Accredited Agent status and TAFI membership, establishing direct airline ticketing authority and worldwide contract fares.',
+  },
+  {
+    year: '2022',
+    title: 'Signature Tour Packages & Umrah',
+    event:
+      'Expanded bespoke international holiday packages across Thailand, Bali, Maldives, and Europe, alongside sacred Umrah pilgrimage services with direct flights.',
+  },
+  {
+    year: '2024',
+    title: 'Dubai Branch Office Established',
+    event:
+      'Expanded international operations with a branch office in Dubai, UAE, facilitating seamless cross-border coordination for GCC travelers and global routing.',
+  },
+  {
+    year: 'Present',
+    title: 'Trusted Across Malabar & Beyond',
+    event:
+      'Thousands of families, honeymoon couples, and corporate travelers served with personalized attention, zero hidden fees, and 24/7 on-trip assistance.',
+  },
 ]
 
-const values = [
-  { title: 'Intention over impulse.', body: 'We turn down journeys that don\'t make sense. Every trip we build has a reason.' },
-  { title: 'Depth over breadth.', body: 'Six cities in five days is not a journey. It\'s a to-do list. We plan differently.' },
-  { title: 'Local over generic.', body: 'We work with guides, cooks, and storytellers who live in the places we visit.' },
-  { title: 'Honest over impressive.', body: 'If something doesn\'t match your vision of a great trip, we\'ll tell you.' },
+const pillars = [
+  {
+    title: 'In-House IATA Direct Ticketing',
+    desc: 'Direct GDS access for instant airline PNR generation, preferred fares out of Calicut (CCJ), Cochin (COK), Kannur (CNN), and 24/7 live rebooking assistance.',
+  },
+  {
+    title: '22 Years Leadership by Shahul Hameed',
+    desc: 'Led by founder Shahul Hameed with over two decades of travel expertise, every itinerary is planned with real logistical accuracy and firsthand destination knowledge.',
+  },
+  {
+    title: 'Malabar Roots, Global Presence',
+    desc: 'Headquartered in Puthiyara, Calicut with an international branch desk in Dubai, giving our passengers genuine local warmth backed by international reach.',
+  },
+  {
+    title: 'Zero Hidden Fees & Direct Human Care',
+    desc: 'Unlike faceless online booking portals, you speak with a dedicated specialist who takes personal responsibility for your journey from start to finish.',
+  },
 ]
 
 export default function AboutPage() {
+  const generalWhatsApp = buildGeneralEnquiryUrl()
+
   return (
-    <div>
-      {/* Hero */}
-      <section
-        className="min-h-[70vh] flex flex-col justify-end section-padding relative overflow-hidden"
-        aria-label="About One World"
-        style={{ background: 'var(--background-soft)' }}
-      >
-        <div className="container-wide relative z-10">
-          <div className="flex items-center gap-3 mb-8">
-            <span className="accent-dot" aria-hidden="true" />
-            <span className="text-label text-xs" style={{ color: 'var(--muted)' }}>About</span>
-          </div>
-          <h1 className="text-display mb-6" style={{ maxWidth: '10ch' }}>
-            Travel,
-            <br />
-            <em style={{ color: 'var(--accent)', fontStyle: 'normal' }}>with intention.</em>
+    <div className="pt-20 sm:pt-24">
+      {/* Compact Top Header Bar */}
+      <div className="container-wide py-3 sm:py-4 border-b border-black/[0.06] flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <h1 className="text-xl sm:text-2xl font-serif font-bold text-foreground">
+            About Oneworld Travel and Tours
           </h1>
-          <p className="text-body max-w-lg">
-            We are a small team of travel designers who believe that every journey should feel like it was built
-            specifically for the person taking it. Because it should be.
-          </p>
+          <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-accent/10 text-accent font-semibold hidden sm:inline-block">
+            Est. 2019 · Puthiyara, Calicut · Dubai Branch
+          </span>
         </div>
+        <Link href="/packages" className="btn btn-outline text-xs px-3.5 py-1.5">
+          Explore Packages →
+        </Link>
+      </div>
 
-        {/* Decorative number */}
-        <div
-          className="absolute right-0 top-1/2 -translate-y-1/2 text-[20rem] font-bold leading-none select-none pointer-events-none"
-          style={{ color: 'rgba(0,0,0,0.03)', letterSpacing: '-0.05em' }}
-          aria-hidden="true"
-        >
-          01
-        </div>
-      </section>
-
-      {/* Story section */}
-      <section className="section-padding" aria-label="Our Story">
+      {/* Main Story & Founder Section */}
+      <section className="py-8 sm:py-14" aria-label="Our Story">
         <div className="container-wide">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-            <div>
-              <h2 className="text-title mb-8">How we began.</h2>
-              <div className="space-y-5">
-                <p className="text-body">
-                  One World started with a bad trip. Not dangerous — just hollow. A week in a place we&apos;d
-                  wanted to visit for years, spent mostly on a bus with a flag, looking at things through a
-                  camera we didn&apos;t have time to focus properly.
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+            
+            {/* Story text */}
+            <div className="lg:col-span-7">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="w-2 h-2 rounded-full bg-accent" />
+                <span className="text-label text-xs uppercase tracking-widest text-accent font-semibold">
+                  Founder &amp; Heritage
+                </span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-neutral-900 leading-tight mb-6">
+                Built on 22 Years of Travel Expertise.
+              </h2>
+
+              <div className="space-y-4 text-neutral-700 leading-relaxed text-sm sm:text-base font-sans">
+                <p>
+                  <strong>ONEWORLD TRAVEL AND TOURS</strong> was founded in <strong>2019</strong> in <strong>Puthiyara, Calicut</strong> by <strong>Shahul Hameed</strong>, bringing more than <strong>22 years of hands-on expertise</strong> in the aviation and tourism industry.
                 </p>
-                <p className="text-body">
-                  We came back and thought: there must be a better way to do this. There is. It just requires
-                  more patience than most travel companies are willing to spend.
+                <p>
+                  Having spent over two decades in the travel sector, Shahul Hameed established Oneworld Travel and Tours to solve a growing frustration: the impersonal nature of online ticket aggregators, hidden charges, and the lack of reliable human support when travel plans change unexpectedly.
                 </p>
-                <p className="text-body">
-                  So we started One World in 2016 with that patience as our product. We spend more time
-                  listening before we plan. We turn down trips that don&apos;t make sense. We work with guides
-                  who are passionate about their places — not just fluent in English.
+                <p>
+                  In <strong>2020</strong>, the company achieved official <strong>IATA Accredited Agent</strong> status and induction into the <strong>TAFI (Travel Agents Federation of India)</strong>. With our own direct in-house ticketing authority, we deal directly with global airlines, securing verified contract fares, instant PNR issuance, and 24/7 dedicated rebooking assistance for flights departing Calicut, Cochin, Kannur, and international hubs.
                 </p>
-                <p className="text-body">
-                  The result, we like to think, is journeys that feel less like itineraries and more like stories
-                  you had something to do with writing.
+                <p>
+                  Today, rooted firmly in Malabar with our head office on Mini Bypass Road, Puthiyara, Calicut and an international branch in <strong>Dubai, UAE</strong>, we combine deep local understanding with global execution — specializing in direct flight ticketing, tailored holiday packages, and sacred Umrah pilgrimages.
                 </p>
+              </div>
+
+              {/* Founder Quote Card */}
+              <div className="mt-8 p-5 sm:p-6 rounded-2xl bg-neutral-50 border border-neutral-200/80 shadow-xs relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1.5 h-full bg-accent" />
+                <p className="text-sm sm:text-base italic text-neutral-800 font-serif leading-relaxed mb-3">
+                  &ldquo;Travel is never just about booking a ticket or reserving a room. It is about trust, peace of mind, and having someone genuinely looking out for your family at every step of the journey.&rdquo;
+                </p>
+                <div className="flex items-center gap-3">
+                  <div>
+                    <p className="font-bold text-xs sm:text-sm text-neutral-900">Shahul Hameed</p>
+                    <p className="text-[11px] text-neutral-500">Founder &amp; Managing Director · 22 Years Travel Industry Veteran</p>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="space-y-8">
-              <div className="img-organic relative aspect-[4/3] overflow-hidden">
+            {/* Sidebar: Image & Key Facts */}
+            <div className="lg:col-span-5 space-y-6">
+              <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-lg border border-black/5 bg-neutral-900">
                 <Image
                   src="/images/about-travel.jpg"
-                  alt="Passenger jetliner soaring gracefully above turquoise coral reefs and tropical islands at golden hour — One World Travel"
+                  alt="Oneworld Travel and Tours — Global journeys and flight connections"
                   fill
-                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  sizes="(max-width: 1024px) 100vw, 40vw"
                   className="object-cover"
-                  quality={85}
+                  quality={90}
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute bottom-5 left-5 right-5 text-white">
+                  <p className="text-[11px] uppercase tracking-wider text-white/70 font-semibold">Calicut Head Office &amp; Dubai Branch</p>
+                  <p className="text-base font-serif font-bold text-white">Connecting Calicut to the World</p>
+                </div>
               </div>
 
-              {/* Glass stats */}
-              <div className="glass rounded-2xl p-6 grid grid-cols-2 gap-6">
-                {[
-                  { num: '2,400+', label: 'Journeys crafted' },
-                  { num: '48', label: 'Destinations' },
-                  { num: '97%', label: 'Would return' },
-                  { num: '10yr', label: 'Experience' },
-                ].map((s) => (
-                  <div key={s.label}>
-                    <p className="text-2xl font-bold tracking-tight mb-1" style={{ letterSpacing: '-0.02em' }}>{s.num}</p>
-                    <p className="text-xs" style={{ color: 'var(--muted)' }}>{s.label}</p>
+              {/* Verified Metrics Grid */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-4 rounded-2xl bg-white border border-neutral-200/80 shadow-xs">
+                  <p className="text-2xl font-bold font-serif text-accent">22+ Yrs</p>
+                  <p className="text-xs text-neutral-600 mt-0.5 font-medium">Founder Experience</p>
+                </div>
+                <div className="p-4 rounded-2xl bg-white border border-neutral-200/80 shadow-xs">
+                  <p className="text-2xl font-bold font-serif text-neutral-900">2019</p>
+                  <p className="text-xs text-neutral-600 mt-0.5 font-medium">Year Established</p>
+                </div>
+                <div className="p-4 rounded-2xl bg-white border border-neutral-200/80 shadow-xs">
+                  <div className="flex items-center gap-1.5 text-emerald-600">
+                    <ShieldCheck size={18} />
+                    <span className="font-bold text-sm">IATA</span>
                   </div>
-                ))}
+                  <p className="text-xs text-neutral-600 mt-0.5 font-medium">Accredited Agent (2020)</p>
+                </div>
+                <div className="p-4 rounded-2xl bg-white border border-neutral-200/80 shadow-xs">
+                  <div className="flex items-center gap-1.5 text-accent">
+                    <Award size={18} />
+                    <span className="font-bold text-sm">TAFI</span>
+                  </div>
+                  <p className="text-xs text-neutral-600 mt-0.5 font-medium">Active Member</p>
+                </div>
+              </div>
+
+              {/* Office Location Box */}
+              <div className="p-5 rounded-2xl bg-neutral-900 text-white shadow-md">
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs uppercase tracking-wider text-neutral-400 font-semibold">Head Office</p>
+                    <p className="text-xs sm:text-sm font-medium mt-1 leading-snug">
+                      27/19, First Floor, Zam Zam Building,<br />
+                      Mini Bypass Road, Puthiyara,<br />
+                      Calicut (Kozhikode), Kerala
+                    </p>
+                    <p className="text-[11px] text-accent mt-2 font-medium">
+                      International Branch: Dubai, UAE
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>
 
-      {/* Values */}
-      <section className="section-padding" style={{ background: 'var(--background-soft)' }} aria-label="Our Values">
+      {/* Core Strengths & Values */}
+      <section className="py-12 sm:py-16 bg-neutral-50 border-y border-neutral-200/80" aria-label="Why Choose Us">
         <div className="container-wide">
-          <div className="flex items-center gap-3 mb-12">
-            <span className="text-label text-xs" style={{ color: 'var(--muted)' }}>What we believe</span>
-            <span className="accent-line" aria-hidden="true" />
+          <div className="max-w-2xl mb-10">
+            <span className="text-label text-xs uppercase tracking-widest text-accent font-semibold">
+              Our Core Strengths
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-neutral-900 mt-1">
+              Why Travelers Trust Oneworld Travel and Tours
+            </h2>
+            <p className="text-neutral-600 text-sm mt-2">
+              We specialize in direct ticketing and personalized holiday packages backed by authentic human care and regulatory accreditation.
+            </p>
           </div>
-          <h2 className="text-title mb-16">The things we won&apos;t compromise on.</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-            {values.map((v, i) => (
-              <div key={v.title} className="flex gap-5">
-                <span className="text-label text-xs pt-1 flex-shrink-0" style={{ color: 'var(--accent)' }}>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {pillars.map((p, i) => (
+              <div key={p.title} className="p-6 rounded-2xl bg-white border border-neutral-200/80 shadow-xs flex gap-4">
+                <span className="text-accent font-serif font-bold text-xl flex-shrink-0">
                   0{i + 1}
                 </span>
                 <div>
-                  <h3 className="font-semibold text-lg mb-2 tracking-tight">{v.title}</h3>
-                  <p className="text-body">{v.body}</p>
+                  <h3 className="font-bold text-base text-neutral-900 mb-1.5">{p.title}</h3>
+                  <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">{p.desc}</p>
                 </div>
               </div>
             ))}
@@ -148,42 +246,84 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Timeline */}
-      <section className="section-padding" aria-label="Our Journey — Milestones">
+      {/* Verified Timeline */}
+      <section className="py-12 sm:py-16" aria-label="Milestones Timeline">
         <div className="container-wide">
-          <div className="flex items-center gap-3 mb-12">
-            <span className="text-label text-xs" style={{ color: 'var(--muted)' }}>Timeline</span>
-            <span className="accent-line" aria-hidden="true" />
+          <div className="max-w-xl mb-10">
+            <span className="text-label text-xs uppercase tracking-widest text-accent font-semibold">
+              Our Journey
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-neutral-900 mt-1">
+              Key Milestones
+            </h2>
           </div>
-          <h2 className="text-title mb-16">Ten years of journeys.</h2>
-          <div className="space-y-0 max-w-2xl">
-            {milestones.map((m, i) => (
+
+          <div className="space-y-0 max-w-3xl">
+            {milestones.map((m) => (
               <div
                 key={m.year}
-                className="flex gap-8 py-6 border-t"
-                style={{ borderColor: 'var(--border)' }}
+                className="flex flex-col sm:flex-row gap-2 sm:gap-8 py-5 border-t border-neutral-200/80"
               >
-                <span className="font-mono text-sm font-bold w-12 flex-shrink-0 pt-0.5" style={{ color: 'var(--accent)' }}>
-                  {m.year}
-                </span>
-                <p className="text-body">{m.event}</p>
+                <div className="w-24 shrink-0">
+                  <span className="font-mono text-base font-bold text-accent">
+                    {m.year}
+                  </span>
+                </div>
+                <div>
+                  <p className="font-bold text-sm text-neutral-900 mb-1">{m.title}</p>
+                  <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">{m.event}</p>
+                </div>
               </div>
             ))}
-            <div className="border-t" style={{ borderColor: 'var(--border)' }} />
+            <div className="border-t border-neutral-200/80" />
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="section-padding" style={{ background: 'var(--background-soft)' }} aria-label="Start your journey">
-        <div className="container-narrow text-center">
-          <h2 className="text-title mb-4">Ready to travel differently?</h2>
-          <p className="text-body mx-auto max-w-sm mb-8">
-            Tell us where you want to go. We&apos;ll tell you what you haven&apos;t thought of yet.
-          </p>
-          <div className="flex gap-4 justify-center flex-wrap">
-            <Link href="/contact" className="btn btn-accent">Start Planning →</Link>
-            <Link href="/journeys" className="btn btn-outline">Browse Journeys</Link>
+      {/* Contact & Desk Details CTA */}
+      <section className="py-12 sm:py-16 bg-neutral-900 text-white" aria-label="Visit or Contact Us">
+        <div className="container-wide">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            
+            <div className="lg:col-span-7">
+              <span className="text-xs uppercase tracking-widest text-accent font-semibold">Visit Our Desk</span>
+              <h2 className="text-2xl sm:text-3xl font-serif font-bold mt-1 text-white">
+                Plan Your Next Trip with Shahul Hameed &amp; Team
+              </h2>
+              <p className="text-neutral-300 text-sm mt-3 max-w-xl leading-relaxed">
+                Whether you need urgent flight ticketing from Calicut, a sacred Umrah package, a family getaway, or visa assistance — our team in Puthiyara and Dubai is ready to assist.
+              </p>
+
+              <div className="mt-6 flex flex-wrap gap-4 text-xs text-neutral-300">
+                <div className="flex items-center gap-2">
+                  <Phone size={14} className="text-accent" />
+                  <span className="font-semibold text-white">+91 9746 299 992</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Mail size={14} className="text-accent" />
+                  <span>Calicut@oneworldtravel.co.in</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock size={14} className="text-accent" />
+                  <span>Mon – Sat: 9:30 AM – 6:30 PM</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-5 flex flex-col sm:flex-row gap-3 lg:justify-end">
+              <a
+                href={generalWhatsApp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-accent text-xs px-6 py-3 flex items-center justify-center gap-2 shadow-lg"
+              >
+                <span>WhatsApp Desk (+91 9746 299 992)</span>
+              </a>
+              <Link href="/packages" className="btn btn-outline border-white/20 text-white hover:bg-white/10 text-xs px-5 py-3 text-center">
+                Browse Packages
+              </Link>
+            </div>
+
           </div>
         </div>
       </section>

@@ -51,7 +51,7 @@ export default function GalleryPreviewSection() {
               <span className="accent-line" aria-hidden="true" />
             </div>
             <h2 className="text-headline reveal-up">
-              Journeys
+              Moments
               <br />
               in frame.
             </h2>

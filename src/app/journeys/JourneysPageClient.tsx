@@ -34,58 +34,46 @@ export default function JourneysPageClient() {
   }, [experienceFilter, categoryFilter, durationFilter, search])
 
   return (
-    <div>
-      {/* Header */}
+    <div className="pt-20 sm:pt-24">
+      {/* Sticky Filter Bar with Compact Header — Packages are seen right away */}
       <section
-        className="pt-32 pb-16 md:pt-40 md:pb-20 bg-background-soft border-b border-black/[0.06]"
-        aria-label="Journeys collection"
+        className="sticky top-16 z-30 py-3 sm:py-4 border-b border-black/[0.08] bg-white/95 backdrop-blur-xl shadow-xs"
+        aria-label="Package filters"
       >
         <div className="container-wide">
-          <div className="flex items-center gap-2.5 mb-6">
-            <span className="accent-dot" aria-hidden="true" />
-            <span className="text-label text-xs text-muted">Official Packages Catalog</span>
-          </div>
-          <h1 className="text-display text-foreground mb-4">
-            Curated Escapes &
-            <br />
-            <span className="text-accent font-serif">Verified Packages.</span>
-          </h1>
-          <p className="text-body max-w-lg text-base">
-            Explore 14+ verified travel packages from One World Holidays. Filter by destination, category, or experience type.
-          </p>
-        </div>
-      </section>
+          <div className="flex flex-wrap gap-3 sm:gap-4 items-center justify-between">
+            {/* Title & Count */}
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-xl sm:text-2xl font-serif font-bold text-foreground">
+                Packages
+              </h1>
+              <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-accent/10 text-accent font-semibold">
+                {filtered.length} available
+              </span>
+            </div>
 
-      {/* Sticky Filters */}
-      <section
-        className="sticky top-16 z-30 py-4 border-b border-black/[0.08] bg-white/95 backdrop-blur-xl shadow-sm"
-        aria-label="Journey filters"
-      >
-        <div className="container-wide">
-          <div className="flex flex-wrap gap-4 items-center justify-between">
             {/* Search */}
-            <div className="relative flex-1 min-w-[200px] max-w-xs">
-              <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true" />
+            <div className="relative flex-1 min-w-[170px] max-w-xs">
+              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true" />
               <input
-                id="journey-search"
+                id="package-search"
                 type="search"
                 placeholder="Search packages..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 text-xs rounded-full border border-black/15 bg-white focus:outline-none focus:ring-2 focus:ring-accent"
+                className="w-full pl-9 pr-4 py-1.5 sm:py-2 text-xs rounded-full border border-black/15 bg-white focus:outline-none focus:ring-2 focus:ring-accent"
               />
             </div>
 
             {/* Category Filter */}
-            <div className="flex gap-2 items-center">
-              <span className="text-xs text-muted font-medium mr-1 hidden sm:inline">Category:</span>
+            <div className="flex gap-1.5 items-center">
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setCategoryFilter(cat)}
-                  className={`text-xs px-3.5 py-1.5 rounded-full border transition-all ${
+                  className={`text-xs px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full border transition-all ${
                     categoryFilter === cat
-                      ? 'bg-foreground text-white border-foreground font-semibold'
+                      ? 'bg-foreground text-white border-foreground font-semibold shadow-xs'
                       : 'bg-white text-foreground border-black/15 hover:border-foreground'
                   }`}
                 >
@@ -95,15 +83,14 @@ export default function JourneysPageClient() {
             </div>
 
             {/* Duration Filter */}
-            <div className="flex gap-2 items-center">
-              <span className="text-xs text-muted font-medium mr-1 hidden sm:inline">Duration:</span>
+            <div className="flex gap-1.5 items-center">
               {durations.map((d) => (
                 <button
                   key={d}
                   onClick={() => setDurationFilter(d)}
-                  className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
+                  className={`text-xs px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full border transition-all ${
                     durationFilter === d
-                      ? 'bg-accent text-white border-accent font-semibold'
+                      ? 'bg-accent text-white border-accent font-semibold shadow-xs'
                       : 'bg-white text-foreground border-black/15 hover:border-accent'
                   }`}
                 >
@@ -115,8 +102,8 @@ export default function JourneysPageClient() {
         </div>
       </section>
 
-      {/* Grid Results */}
-      <section className="py-16 bg-background" aria-label="Journey results">
+      {/* Grid Results — Visible right away */}
+      <section className="py-6 sm:py-8 bg-background" aria-label="Package results">
         <div className="container-wide">
           {filtered.length === 0 ? (
             <div className="text-center py-20 bg-background-soft rounded-3xl p-8 border border-black/[0.06]">
@@ -145,7 +132,7 @@ export default function JourneysPageClient() {
                 {filtered.map((journey) => (
                   <article key={journey.id} className="group">
                     <Link
-                      href={`/journeys/${journey.slug}`}
+                      href={`/packages/${journey.slug}`}
                       className="block bg-background-soft rounded-3xl p-3 border border-black/[0.08] hover:border-black/20 hover:shadow-2xl transition-all duration-300 flex flex-col h-full"
                     >
                       {/* Image */}

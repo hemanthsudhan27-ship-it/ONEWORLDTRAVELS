@@ -17,31 +17,24 @@ export const metadata: Metadata = {
 
 export default function DestinationsPage() {
   return (
-    <div>
-      {/* Hero */}
-      <section
-        className="section-padding"
-        style={{ background: 'var(--background-soft)' }}
-        aria-label="Destinations collection"
-      >
-        <div className="container-wide">
-          <div className="flex items-center gap-3 mb-8">
-            <span className="accent-dot" aria-hidden="true" />
-            <span className="text-label text-xs" style={{ color: 'var(--muted)' }}>Destinations</span>
-          </div>
-          <h1 className="text-headline mb-6">
-            The world,
-            <br />
-            <span style={{ color: 'var(--accent)' }}>curated.</span>
+    <div className="pt-20 sm:pt-24">
+      {/* Compact Top Header — Destinations listed first */}
+      <div className="container-wide py-3 sm:py-4 border-b border-black/[0.06] flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <h1 className="text-xl sm:text-2xl font-serif font-bold text-foreground">
+            Destinations
           </h1>
-          <p className="text-body max-w-md">
-            Every destination on our list is somewhere we know deeply. Not just visited — understood.
-          </p>
+          <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-accent/10 text-accent font-semibold hidden sm:inline-block">
+            {destinations.length} Curated Regions
+          </span>
         </div>
-      </section>
+        <Link href="/packages" className="btn btn-outline text-xs px-3.5 py-1.5">
+          View All Packages →
+        </Link>
+      </div>
 
-      {/* Destination grid */}
-      <section className="section-padding" aria-label="All Destinations">
+      {/* Destination grid — starts right away! */}
+      <section className="py-6 sm:py-8" aria-label="All Destinations">
         <div className="container-wide">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {destinations.map((dest, index) => (

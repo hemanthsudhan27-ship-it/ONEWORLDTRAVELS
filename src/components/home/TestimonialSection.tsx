@@ -98,8 +98,8 @@ export default function TestimonialSection() {
               >
                 Share Your Experience →
               </a>
-              <Link href="/journeys" className="btn btn-outline text-xs px-5 py-2.5">
-                Explore Our Journeys
+              <Link href="/packages" className="btn btn-outline text-xs px-5 py-2.5">
+                Explore Our Packages
               </Link>
             </div>
           </div>

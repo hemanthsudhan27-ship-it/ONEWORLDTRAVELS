@@ -80,7 +80,7 @@ export default function JourneysSection() {
             </div>
           </div>
           <div className="reveal-up">
-            <Link href="/journeys" className="btn btn-outline text-sm flex items-center gap-2">
+            <Link href="/packages" className="btn btn-outline text-sm flex items-center gap-2">
               View All Packages
               <ArrowRight className="w-4 h-4" />
             </Link>
@@ -180,9 +180,8 @@ export default function JourneysSection() {
                   </div>
                   <div className="flex items-center gap-1.5 flex-shrink-0">
                     <Link
-                      href={`/journeys/${journey.slug}`}
-                      className="px-3 py-1.5 rounded-full text-[10px] font-semibold transition-all duration-200 border"
-                      style={{ borderColor: 'var(--border)', color: 'var(--foreground)' }}
+                      href={`/packages/${journey.slug}`}
+                      className="px-3.5 py-1.5 rounded-full text-[10px] font-semibold transition-all duration-200 border border-neutral-300 hover:border-neutral-500 hover:bg-neutral-100 active:scale-95 text-neutral-800"
                     >
                       Details
                     </Link>
@@ -190,8 +189,7 @@ export default function JourneysSection() {
                       href={buildJourneyEnquiryUrl(journey.title, journey.destination)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1.5 rounded-full text-[10px] font-semibold transition-all duration-200 flex items-center gap-1"
-                      style={{ background: 'var(--accent)', color: 'white' }}
+                      className="px-3.5 py-1.5 rounded-full text-[10px] font-semibold transition-all duration-200 flex items-center gap-1 bg-[#C4171A] hover:bg-[#991217] text-white shadow-xs active:scale-95"
                     >
                       <WhatsAppIcon className="w-3 h-3" />
                       Enquire

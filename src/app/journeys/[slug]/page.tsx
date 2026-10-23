@@ -61,7 +61,7 @@ export default async function JourneyDetailPage({ params }: Props) {
             <ol className="flex items-center gap-2 text-xs text-white/60">
               <li><Link href="/" className="hover:text-white transition-colors">Home</Link></li>
               <li aria-hidden="true">/</li>
-              <li><Link href="/journeys" className="hover:text-white transition-colors">Journeys</Link></li>
+              <li><Link href="/packages" className="hover:text-white transition-colors">Packages</Link></li>
               <li aria-hidden="true">/</li>
               <li className="text-white/90 font-medium" aria-current="page">{journey.title}</li>
             </ol>

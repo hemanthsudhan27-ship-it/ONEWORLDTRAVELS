@@ -39,25 +39,24 @@ export default function MobileMenu({ isOpen, onClose, links, currentPath }: Mobi
         aria-hidden="true"
       />
 
-      {/* Panel */}
+      {/* Panel with smooth overflow scrolling on small screens */}
       <div
-        className={`absolute inset-y-0 right-0 w-full max-w-sm bg-white flex flex-col transition-transform duration-500 ease-out ${
+        className={`absolute inset-y-0 right-0 w-full max-w-sm bg-white flex flex-col justify-between overflow-y-auto transition-transform duration-500 ease-out shadow-2xl ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-black/[0.06]">
+        <div className="flex items-center justify-between p-5 sm:p-6 border-b border-black/[0.06] shrink-0">
           <Link
             href="/"
             onClick={onClose}
-            className="font-semibold text-[15px] tracking-tight"
-            style={{ letterSpacing: '-0.01em' }}
+            className="font-serif font-bold text-lg text-neutral-900 tracking-tight"
           >
-            One World
+            One World Travel
           </Link>
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-black/5 transition-colors"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-800 transition-colors active:scale-95"
             aria-label="Close menu"
           >
             <X size={18} />
@@ -118,11 +117,11 @@ export default function MobileMenu({ isOpen, onClose, links, currentPath }: Mobi
             Plan My Trip
           </a>
           <Link
-            href="/journeys"
+            href="/packages"
             onClick={onClose}
             className="btn btn-outline w-full justify-center text-sm"
           >
-            Browse Journeys
+            Browse Packages
           </Link>
         </div>
       </div>

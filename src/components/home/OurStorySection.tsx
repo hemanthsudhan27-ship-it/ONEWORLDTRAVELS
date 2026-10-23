@@ -55,13 +55,13 @@ export default function OurStorySection() {
 
             <div className="reveal-up space-y-4 mb-10">
               <p className="text-body">
-                One World Travel & Tours was founded on a simple conviction: travel should never feel mechanical or impersonal. It should feel deeply personal, seamless, and memorable.
+                Oneworld Travel and Tours was founded in 2019 in Puthiyara, Calicut by industry veteran Shahul Hameed, bringing over 22 years of hands-on expertise in aviation and global tourism.
               </p>
               <p className="text-body">
-                Headquartered in Puthiyara, Calicut since 2016, we have grown into an IATA-accredited agency and TAFI member, earning the trust of thousands of families, honeymooners, corporate travellers, and pilgrims.
+                Headquartered on Mini Bypass Road, Puthiyara with an international branch in Dubai, we are an official IATA-accredited agency and TAFI member, earning the trust of thousands of families, honeymooners, and Umrah pilgrims.
               </p>
               <p className="text-body">
-                From international flight ticketing and seamless visa processing to sacred Umrah journeys and bespoke holiday getaways, we craft each itinerary with care, local knowledge, and end-to-end dedication.
+                From in-house direct flight ticketing and global visa processing to customized holiday packages across Asia, Europe, and sacred pilgrimage journeys, every plan is crafted with personal care and verified excellence.
               </p>
             </div>
 
@@ -106,7 +106,7 @@ export default function OurStorySection() {
             >
               <div className="flex items-center gap-2 mb-3">
                 <span className="accent-dot" aria-hidden="true" />
-                <span className="text-label text-xs" style={{ color: 'var(--muted)' }}>Since 2016</span>
+                <span className="text-label text-xs" style={{ color: 'var(--muted)' }}>Since 2019</span>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>

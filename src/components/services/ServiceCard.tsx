@@ -159,10 +159,10 @@ export default function ServiceCard({ service, onEnquire }: ServiceCardProps) {
 
         {/* Direct Call Link */}
         <a
-          href="tel:+919072329992"
+          href="tel:+919746299992"
           className="p-3 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors duration-200 flex items-center justify-center flex-shrink-0"
           title="Call One World Travel Puthiyara Office"
-          aria-label="Call +91 907 2329 992"
+          aria-label="Call +91 9746 299 992"
         >
           <PhoneCall size={16} />
         </a>

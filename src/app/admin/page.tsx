@@ -22,6 +22,8 @@ import {
   ArrowLeft,
   ShieldCheck,
   Eye,
+  Pencil,
+  X,
 } from 'lucide-react'
 import type { Review } from '@/lib/data/reviews'
 import type { GalleryItem } from '@/lib/data/gallery'
@@ -43,6 +45,8 @@ function AdminPanelContent() {
   const [isLoadingReviews, setIsLoadingReviews] = useState(false)
   const [isSubmittingReview, setIsSubmittingReview] = useState(false)
   const [isDeletingReview, setIsDeletingReview] = useState<string | null>(null)
+  const [editingReviewId, setEditingReviewId] = useState<string | null>(null)
+  const reviewFormRef = useRef<HTMLDivElement>(null)
 
   // Review form
   const [author, setAuthor] = useState('')
@@ -114,7 +118,31 @@ function AdminPanelContent() {
     }
   }
 
-  const handleAddReview = async (e: React.FormEvent) => {
+  const startEditReview = (r: Review) => {
+    setEditingReviewId(r.id)
+    setAuthor(r.author)
+    setLocation(r.location || '')
+    setJourney(r.journey || '')
+    setRating(r.rating || 5)
+    setQuote(r.quote)
+    setTravelDate(r.date || '')
+    setIsVerified(r.verified !== false)
+    setStatusMessage(null)
+    reviewFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const cancelEditReview = () => {
+    setEditingReviewId(null)
+    setAuthor('')
+    setLocation('')
+    setJourney('')
+    setRating(5)
+    setQuote('')
+    setTravelDate('')
+    setIsVerified(true)
+  }
+
+  const handleSaveReview = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!author.trim() || !quote.trim()) {
       setStatusMessage({ text: 'Please fill in traveler name and review quote.', type: 'error' })
@@ -124,14 +152,18 @@ function AdminPanelContent() {
     setIsSubmittingReview(true)
     setStatusMessage(null)
 
+    const isEditing = Boolean(editingReviewId)
+    const method = isEditing ? 'PUT' : 'POST'
+
     try {
       const res = await fetch('/api/admin/reviews', {
-        method: 'POST',
+        method,
         headers: {
           Authorization: `Bearer ${password}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          id: editingReviewId || undefined,
           author,
           location,
           journey,
@@ -143,18 +175,17 @@ function AdminPanelContent() {
       })
 
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed to publish review')
+      if (!res.ok) throw new Error(data.error || `Failed to ${isEditing ? 'update' : 'publish'} review`)
 
-      setStatusMessage({ text: 'Traveler review published to website successfully!', type: 'success' })
-      setAuthor('')
-      setLocation('')
-      setJourney('')
-      setQuote('')
-      setTravelDate('')
-      setRating(5)
+      setStatusMessage({
+        text: isEditing ? 'Traveler review updated successfully!' : 'Traveler review published to website successfully!',
+        type: 'success',
+      })
+
+      cancelEditReview()
       await fetchReviews()
     } catch (err: any) {
-      setStatusMessage({ text: err.message || 'Error publishing review', type: 'error' })
+      setStatusMessage({ text: err.message || 'Error saving review', type: 'error' })
     } finally {
       setIsSubmittingReview(false)
     }
@@ -509,14 +540,47 @@ function AdminPanelContent() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              {/* Form: Add Review (5 cols) */}
-              <div className="lg:col-span-5 bg-white border border-zinc-200 rounded-3xl p-6 sm:p-7 shadow-sm">
-                <div className="flex items-center gap-2 mb-5 pb-4 border-b border-zinc-100 text-[#C4171A]">
-                  <PlusCircle className="w-5 h-5" />
-                  <h3 className="font-bold text-zinc-900 text-base font-serif">Add New Traveler Review</h3>
+              {/* Form: Add or Edit Review (5 cols) */}
+              <div ref={reviewFormRef} className={`lg:col-span-5 bg-white border rounded-3xl p-6 sm:p-7 shadow-sm transition-all ${
+                editingReviewId ? 'border-blue-300 ring-2 ring-blue-100' : 'border-zinc-200'
+              }`}>
+                <div className="flex items-center justify-between mb-5 pb-4 border-b border-zinc-100">
+                  <div className="flex items-center gap-2">
+                    {editingReviewId ? (
+                      <Pencil className="w-5 h-5 text-blue-600" />
+                    ) : (
+                      <PlusCircle className="w-5 h-5 text-[#C4171A]" />
+                    )}
+                    <h3 className="font-bold text-zinc-900 text-base font-serif">
+                      {editingReviewId ? 'Edit Traveler Review' : 'Add New Traveler Review'}
+                    </h3>
+                  </div>
+                  {editingReviewId && (
+                    <button
+                      type="button"
+                      onClick={cancelEditReview}
+                      className="text-xs text-zinc-500 hover:text-zinc-800 flex items-center gap-1 px-2.5 py-1 rounded-lg bg-zinc-100 hover:bg-zinc-200 transition-colors cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                      Cancel
+                    </button>
+                  )}
                 </div>
 
-                <form onSubmit={handleAddReview} className="space-y-4">
+                {editingReviewId && (
+                  <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between text-xs text-blue-800">
+                    <span>Editing review. Make your changes and click &quot;Save Changes&quot;.</span>
+                    <button
+                      type="button"
+                      onClick={cancelEditReview}
+                      className="underline font-semibold ml-2 hover:text-blue-950 cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
+
+                <form onSubmit={handleSaveReview} className="space-y-4">
                   {/* Traveler Name */}
                   <div>
                     <label className="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-1.5">
@@ -543,7 +607,7 @@ function AdminPanelContent() {
                           key={star}
                           type="button"
                           onClick={() => setRating(star)}
-                          className="p-1 rounded-lg hover:scale-110 transition-transform"
+                          className="p-1 rounded-lg hover:scale-110 transition-transform cursor-pointer"
                           aria-label={`${star} Stars`}
                         >
                           <Star
@@ -626,22 +690,36 @@ function AdminPanelContent() {
                     <span className="font-medium">Mark as Verified Traveler</span>
                   </label>
 
-                  {/* Submit Button */}
-                  <button
-                    type="submit"
-                    disabled={isSubmittingReview}
-                    className="w-full py-3.5 px-4 rounded-xl font-medium text-sm text-white bg-[#C4171A] hover:bg-[#A31316] transition-colors shadow-lg shadow-[#C4171A]/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
-                  >
-                    {isSubmittingReview ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" /> Publishing Review...
-                      </>
-                    ) : (
-                      <>
-                        <PlusCircle className="w-4 h-4" /> Publish Review to Website
-                      </>
+                  {/* Action Buttons */}
+                  <div className="flex gap-2.5 pt-2">
+                    {editingReviewId && (
+                      <button
+                        type="button"
+                        onClick={cancelEditReview}
+                        className="py-3 px-4 rounded-xl font-medium text-sm text-zinc-700 bg-zinc-100 hover:bg-zinc-200 transition-colors cursor-pointer"
+                      >
+                        Cancel
+                      </button>
                     )}
-                  </button>
+                    <button
+                      type="submit"
+                      disabled={isSubmittingReview}
+                      className={`flex-1 py-3.5 px-4 rounded-xl font-medium text-sm text-white ${
+                        editingReviewId ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20' : 'bg-[#C4171A] hover:bg-[#A31316] shadow-[#C4171A]/20'
+                      } transition-colors shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer`}
+                    >
+                      {isSubmittingReview ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" /> {editingReviewId ? 'Saving Changes...' : 'Publishing Review...'}
+                        </>
+                      ) : (
+                        <>
+                          {editingReviewId ? <Pencil className="w-4 h-4" /> : <PlusCircle className="w-4 h-4" />}
+                          <span>{editingReviewId ? 'Save Changes & Update Review' : 'Publish Review to Website'}</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </form>
               </div>
 
@@ -673,11 +751,13 @@ function AdminPanelContent() {
                     {reviews.map((r) => (
                       <div
                         key={r.id}
-                        className="bg-white border border-zinc-200 rounded-2xl p-5 hover:border-zinc-300 shadow-sm transition-all relative group"
+                        className={`bg-white border rounded-2xl p-5 shadow-sm transition-all relative group ${
+                          editingReviewId === r.id ? 'border-blue-400 ring-2 ring-blue-400/20 bg-blue-50/20' : 'border-zinc-200 hover:border-zinc-300'
+                        }`}
                       >
                         <div className="flex items-start justify-between gap-4 mb-3">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-[#C4171A] flex items-center justify-center text-xs font-bold text-white shadow-sm">
+                            <div className="w-10 h-10 rounded-full bg-[#C4171A] flex items-center justify-center text-xs font-bold text-white shadow-sm shrink-0">
                               {r.author
                                 .split(' ')
                                 .map((n) => n[0])
@@ -685,11 +765,16 @@ function AdminPanelContent() {
                                 .slice(0, 2)}
                             </div>
                             <div>
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-2 flex-wrap">
                                 <h4 className="text-sm font-bold text-zinc-900">{r.author}</h4>
                                 {r.verified !== false && (
                                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">
                                     ✓ Verified
+                                  </span>
+                                )}
+                                {editingReviewId === r.id && (
+                                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-bold">
+                                    Currently Editing
                                   </span>
                                 )}
                               </div>
@@ -699,26 +784,37 @@ function AdminPanelContent() {
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-0.5">
+                          <div className="flex items-center gap-2 flex-wrap justify-end">
+                            <div className="flex items-center gap-0.5 mr-1">
                               {Array.from({ length: 5 }).map((_, i) => (
                                 <Star
                                   key={i}
-                                  size={14}
+                                  size={13}
                                   className={i < r.rating ? 'fill-amber-400 text-amber-400' : 'text-zinc-200'}
                                 />
                               ))}
                             </div>
                             <button
+                              onClick={() => startEditReview(r)}
+                              className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 flex items-center gap-1 transition-colors cursor-pointer border border-blue-200/50"
+                              title="Edit review"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                              <span className="hidden sm:inline">Edit</span>
+                            </button>
+                            <button
                               onClick={() => handleDeleteReview(r.id)}
                               disabled={isDeletingReview === r.id}
-                              className="text-zinc-400 hover:text-[#C4171A] p-1.5 rounded-lg hover:bg-red-50 transition-colors ml-2"
+                              className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-red-50 text-red-700 hover:bg-red-100 flex items-center gap-1 transition-colors cursor-pointer border border-red-200/50"
                               title="Delete review"
                             >
                               {isDeletingReview === r.id ? (
-                                <Loader2 className="w-4 h-4 animate-spin text-[#C4171A]" />
+                                <Loader2 className="w-3.5 h-3.5 animate-spin text-[#C4171A]" />
                               ) : (
-                                <Trash2 className="w-4 h-4" />
+                                <>
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                  <span className="hidden sm:inline">Delete</span>
+                                </>
                               )}
                             </button>
                           </div>
@@ -935,10 +1031,12 @@ function AdminPanelContent() {
                             className="object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                           <button
+                            type="button"
                             onClick={() => handleDeleteGallery(item.id)}
                             disabled={isDeletingGallery === item.id}
-                            className="absolute top-2 right-2 p-2 rounded-xl bg-white/90 hover:bg-[#C4171A] hover:text-white text-zinc-700 shadow-sm transition-colors opacity-0 group-hover:opacity-100"
+                            className="absolute top-2 right-2 p-2 rounded-xl bg-white/95 hover:bg-[#C4171A] hover:text-white text-[#C4171A] shadow-md border border-red-100 transition-colors z-10 disabled:opacity-50"
                             title="Delete photo"
+                            aria-label={`Delete photo ${item.caption}`}
                           >
                             {isDeletingGallery === item.id ? (
                               <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -947,15 +1045,33 @@ function AdminPanelContent() {
                             )}
                           </button>
                         </div>
-                        <div className="p-3 bg-white flex-1 flex flex-col justify-between">
+                        <div className="p-3 bg-white flex-1 flex flex-col justify-between gap-2.5">
                           <div>
-                            <p className="text-xs font-bold text-zinc-900 truncate">{item.caption}</p>
+                            <p className="text-xs font-bold text-zinc-900 truncate" title={item.caption}>{item.caption}</p>
                             {item.location && (
                               <p className="text-[11px] text-zinc-500 truncate flex items-center gap-1 mt-0.5">
                                 <MapPin className="w-2.5 h-2.5 text-[#C4171A]" /> {item.location}
                               </p>
                             )}
                           </div>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteGallery(item.id)}
+                            disabled={isDeletingGallery === item.id}
+                            className="w-full py-1.5 px-2.5 rounded-lg bg-red-50 hover:bg-[#C4171A] hover:text-white text-[#C4171A] text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors border border-red-200 disabled:opacity-50"
+                          >
+                            {isDeletingGallery === item.id ? (
+                              <>
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                <span>Deleting...</span>
+                              </>
+                            ) : (
+                              <>
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>Delete Photo</span>
+                              </>
+                            )}
+                          </button>
                         </div>
                       </div>
                     ))}

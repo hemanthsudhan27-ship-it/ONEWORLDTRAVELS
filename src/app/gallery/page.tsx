@@ -2,50 +2,42 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { buildGeneralEnquiryUrl } from '@/lib/whatsapp'
+import { getGalleryItems } from '@/lib/data/gallery'
 
 export const metadata: Metadata = {
-  title: 'Gallery — Journeys in Frame',
+  title: 'Gallery — One World Travel & Tours',
   description:
     'A visual collection of the places, people, and moments that define One World Travel. From the Himalayas to Kerala, Morocco to Japan.',
   alternates: { canonical: 'https://oneworld.travel/gallery' },
   openGraph: {
     title: 'Gallery — One World Travel',
-    description: 'Journeys in frame — a visual anthology of our curated destinations.',
+    description: 'Moments in frame — a visual anthology of our curated destinations.',
     url: 'https://oneworld.travel/gallery',
   },
 }
-
-import { getGalleryItems } from '@/lib/data/gallery'
 
 export default async function GalleryPage() {
   const galleryImages = await getGalleryItems()
 
   return (
-    <div>
-      {/* Hero */}
-      <section
-        className="section-padding"
-        style={{ background: 'var(--background-soft)' }}
-        aria-label="Photo gallery"
-      >
-        <div className="container-wide">
-          <div className="flex items-center gap-3 mb-8">
-            <span className="accent-dot" aria-hidden="true" />
-            <span className="text-label text-xs" style={{ color: 'var(--muted)' }}>Gallery</span>
-          </div>
-          <h1 className="text-headline mb-6">
-            Journeys
-            <br />
-            <span style={{ color: 'var(--accent)' }}>in frame.</span>
+    <div className="pt-20 sm:pt-24">
+      {/* Compact Header — Gallery images visible right away without scrolling */}
+      <div className="container-wide py-3 sm:py-4 border-b border-black/[0.06] flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <h1 className="text-xl sm:text-2xl font-serif font-bold text-foreground">
+            Gallery
           </h1>
-          <p className="text-body max-w-md">
-            A visual anthology of the places, people, and moments that define how we travel.
-          </p>
+          <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-accent/10 text-accent font-semibold hidden sm:inline-block">
+            Moments in Frame
+          </span>
         </div>
-      </section>
+        <Link href="/packages" className="btn btn-outline text-xs px-3.5 py-1.5">
+          Browse Packages →
+        </Link>
+      </div>
 
-      {/* Masonry-style gallery grid */}
-      <section className="section-padding" aria-label="Photo collection">
+      {/* Masonry-style gallery grid — visible immediately */}
+      <section className="py-6 sm:py-8" aria-label="Photo collection">
         <div className="container-wide">
           <div className="columns-1 sm:columns-2 lg:columns-3 gap-5 space-y-5">
             {galleryImages.map((img, i) => (
@@ -62,7 +54,7 @@ export default async function GalleryPage() {
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  quality={80}
+                  quality={85}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <figcaption className="absolute bottom-0 left-0 right-0 p-5 text-white text-sm font-medium opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
@@ -78,7 +70,7 @@ export default async function GalleryPage() {
       <section
         className="section-padding"
         style={{ background: 'var(--background-soft)' }}
-        aria-label="Plan your journey"
+        aria-label="Plan your trip"
       >
         <div className="container-narrow text-center">
           <h2 className="text-title mb-4">Want to be in these photos?</h2>
@@ -93,10 +85,10 @@ export default async function GalleryPage() {
               className="btn btn-accent"
               id="gallery-cta-whatsapp"
             >
-              Plan My Journey →
+              Plan My Trip →
             </a>
-            <Link href="/journeys" className="btn btn-outline">
-              Browse Journeys
+            <Link href="/packages" className="btn btn-outline">
+              Browse Packages
             </Link>
           </div>
         </div>

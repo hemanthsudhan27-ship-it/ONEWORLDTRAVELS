@@ -249,7 +249,7 @@ export function BookingForm({ className, defaultJourneySlug }: BookingFormProps)
             </Label>
             <Input
               id="booking-phone"
-              placeholder="+91 907 2329 992"
+              placeholder="+91 9746 299 992"
               {...register("phone")}
               className={errors.phone ? "border-red-500 focus-visible:ring-red-500/20" : ""}
             />

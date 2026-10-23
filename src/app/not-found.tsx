@@ -22,7 +22,7 @@ export default function NotFound() {
         </p>
         <div className="flex gap-4 justify-center flex-wrap">
           <Link href="/" className="btn btn-primary">Go Home</Link>
-          <Link href="/journeys" className="btn btn-outline">Browse Journeys</Link>
+          <Link href="/packages" className="btn btn-outline">Browse Packages</Link>
         </div>
       </div>
     </div>

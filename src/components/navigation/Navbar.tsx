@@ -9,7 +9,7 @@ import { buildGeneralEnquiryUrl } from '@/lib/whatsapp'
 
 const navLinks = [
   { href: '/', label: 'Home' },
-  { href: '/journeys', label: 'Journeys' },
+  { href: '/packages', label: 'Packages' },
   { href: '/services', label: 'Services' },
   { href: '/gallery', label: 'Gallery' },
   { href: '/reviews', label: 'Reviews' },
@@ -70,7 +70,7 @@ export default function Navbar() {
             aria-label="Primary navigation"
           >
             {navLinks.map((link) => {
-              const isActive = pathname === link.href || pathname.startsWith(link.href + '/')
+              const isActive = pathname === link.href || pathname.startsWith(link.href + '/') || (link.href === '/packages' && pathname.startsWith('/journeys'))
               return (
                 <Link
                   key={link.href}
@@ -106,16 +106,19 @@ export default function Navbar() {
             </a>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button - High contrast, accessible, minimum 44px tap target */}
           <button
-            className="md:hidden flex flex-col gap-[5px] p-2 rounded-lg transition-colors hover:bg-black/5"
+            className="md:hidden flex items-center justify-center gap-1.5 px-3 py-2 rounded-full border border-black/10 bg-white/90 backdrop-blur-md shadow-xs text-neutral-900 transition-all active:scale-95 hover:bg-white"
             onClick={() => setMenuOpen(true)}
             aria-label="Open navigation menu"
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
           >
-            <span className="block w-5 h-[1.5px] bg-current rounded-full" />
-            <span className="block w-3.5 h-[1.5px] bg-current rounded-full" />
+            <span className="text-[11px] font-bold tracking-wider uppercase text-neutral-800">Menu</span>
+            <div className="flex flex-col gap-[4px] items-end">
+              <span className="block w-4 h-[2px] bg-neutral-900 rounded-full" />
+              <span className="block w-2.5 h-[2px] bg-neutral-900 rounded-full" />
+            </div>
           </button>
         </div>
       </header>
