@@ -1,5 +1,17 @@
 [
   {
+    "id": "review-1792781436856",
+    "author": "Admin Tester",
+    "location": "Calicut, Kerala",
+    "journey": "Curated Journey",
+    "quote": "Test review for verification",
+    "rating": 5,
+    "date": "October 2026",
+    "image": "",
+    "verified": true,
+    "createdAt": "2026-10-23T18:50:36.856Z"
+  },
+  {
     "id": "review-1792781391702",
     "author": "name",
     "location": "Traveler",
