@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": "review-1792781012100",
+    "author": "Admin Tester",
+    "location": "Calicut, Kerala",
+    "journey": "Curated Journey",
+    "quote": "Test review for verification",
+    "rating": 5,
+    "date": "October 2026",
+    "image": "",
+    "verified": true,
+    "createdAt": "2026-10-23T18:43:32.100Z"
+  }
+]
