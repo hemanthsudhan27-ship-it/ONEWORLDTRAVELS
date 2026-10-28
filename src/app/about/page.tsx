@@ -105,7 +105,7 @@ export default function AboutPage() {
       <section className="py-8 sm:py-14" aria-label="Our Story">
         <div className="container-wide">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
-            
+
             {/* Story text */}
             <div className="lg:col-span-7">
               <div className="flex items-center gap-2 mb-3">
@@ -126,8 +126,7 @@ export default function AboutPage() {
                   Having spent over two decades in the travel sector, Shahul Hameed established Oneworld Travel and Tours to solve a growing frustration: the impersonal nature of online ticket aggregators, hidden charges, and the lack of reliable human support when travel plans change unexpectedly.
                 </p>
                 <p>
-                  In <strong>2020</strong>, the company achieved official <strong>IATA Accredited Agent</strong> status and induction into the <strong>TAFI (Travel Agents Federation of India)</strong>. With our own direct in-house ticketing authority, we deal directly with global airlines, securing verified contract fares, instant PNR issuance, and 24/7 dedicated rebooking assistance for flights departing Calicut, Cochin, Kannur, and international hubs.
-                </p>
+                  In <strong>2020</strong>, the company achieved official <strong>IATA Accredited Agent</strong> status and induction into the <strong>TAFI (Travel Agents Federation of India)</strong>. With our own direct in-house ticketing authority, we deal directly with global airlines, securing verified contract fares, instant PNR issuance, and 24/7 dedicated rebooking assistance.</p>
                 <p>
                   Today, rooted firmly in Malabar with our head office on Mini Bypass Road, Puthiyara, Calicut and an international branch in <strong>Dubai, UAE</strong>, we combine deep local understanding with global execution — specializing in direct flight ticketing, tailored holiday packages, and sacred Umrah pilgrimages.
                 </p>
@@ -284,7 +283,7 @@ export default function AboutPage() {
       <section className="py-12 sm:py-16 bg-neutral-900 text-white" aria-label="Visit or Contact Us">
         <div className="container-wide">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            
+
             <div className="lg:col-span-7">
               <span className="text-xs uppercase tracking-widest text-accent font-semibold">Visit Our Desk</span>
               <h2 className="text-2xl sm:text-3xl font-serif font-bold mt-1 text-white">
