@@ -76,11 +76,11 @@ function AdminPanelContent() {
   // This fixes the "invalid password" bug on mobile where React state may be stale
   // (empty string) after a tab suspend/restore, even though sessionStorage has the value.
   const getStoredPassword = (): string =>
-    (typeof window !== 'undefined' ? sessionStorage.getItem('ow_admin_pw') : null) ?? password
+    (typeof window !== 'undefined' ? localStorage.getItem('ow_admin_pw') : null) ?? password
 
   // Check stored session
   useEffect(() => {
-    const saved = sessionStorage.getItem('ow_admin_pw')
+    const saved = localStorage.getItem('ow_admin_pw')
     if (saved) {
       setPassword(saved)
       setIsAuthenticated(true)
@@ -96,7 +96,7 @@ function AdminPanelContent() {
       setAuthError('Please enter the admin password')
       return
     }
-    sessionStorage.setItem('ow_admin_pw', password)
+    localStorage.setItem('ow_admin_pw', password)
     setIsAuthenticated(true)
     setAuthError('')
     fetchReviews()
@@ -104,7 +104,7 @@ function AdminPanelContent() {
   }
 
   const handleLogout = () => {
-    sessionStorage.removeItem('ow_admin_pw')
+    localStorage.removeItem('ow_admin_pw')
     setIsAuthenticated(false)
     setPassword('')
     setReviews([])
