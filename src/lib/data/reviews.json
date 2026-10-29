@@ -1,17 +1,5 @@
 [
   {
-    "id": "review-1792781240433",
-    "author": "test",
-    "location": "Traveler",
-    "journey": "Curated Journey",
-    "quote": "test",
-    "rating": 5,
-    "date": "2026-10",
-    "image": "",
-    "verified": true,
-    "createdAt": "2026-10-23T18:47:20.433Z"
-  },
-  {
     "id": "review-1792781221940",
     "author": "test",
     "location": "Traveler",
