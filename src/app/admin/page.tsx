@@ -5,10 +5,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import {
-  Lock,
   LogOut,
-  ExternalLink,
-  Star,
+    Star,
   Trash2,
   CheckCircle2,
   AlertCircle,
@@ -27,14 +25,12 @@ import {
 } from 'lucide-react'
 import type { Review } from '@/lib/data/reviews'
 import type { GalleryItem } from '@/lib/data/gallery'
+import { logout } from './login/actions'
 
 function AdminPanelContent() {
   const searchParams = useSearchParams()
   const initialTab = searchParams.get('tab') === 'gallery' ? 'gallery' : 'reviews'
 
-  const [password, setPassword] = useState('')
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [authError, setAuthError] = useState('')
   const [activeTab, setActiveTab] = useState<'reviews' | 'gallery'>(initialTab)
 
   // Status notification
@@ -71,45 +67,6 @@ function AdminPanelContent() {
   const [galleryAlt, setGalleryAlt] = useState('')
   const [galleryAspect, setGalleryAspect] = useState('4/5')
   const galleryFileInputRef = useRef<HTMLInputElement>(null)
-
-  // Helper: always read the password directly from sessionStorage at call-time.
-  // This fixes the "invalid password" bug on mobile where React state may be stale
-  // (empty string) after a tab suspend/restore, even though sessionStorage has the value.
-  const getStoredPassword = (): string =>
-    (typeof window !== 'undefined' ? localStorage.getItem('ow_admin_pw') : null) ?? password
-
-  // Check stored session
-  useEffect(() => {
-    const saved = localStorage.getItem('ow_admin_pw')
-    if (saved) {
-      setPassword(saved)
-      setIsAuthenticated(true)
-      fetchReviews()
-      fetchGallery()
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!password) {
-      setAuthError('Please enter the admin password')
-      return
-    }
-    localStorage.setItem('ow_admin_pw', password)
-    setIsAuthenticated(true)
-    setAuthError('')
-    fetchReviews()
-    fetchGallery()
-  }
-
-  const handleLogout = () => {
-    localStorage.removeItem('ow_admin_pw')
-    setIsAuthenticated(false)
-    setPassword('')
-    setReviews([])
-    setGalleryItems([])
-  }
 
   // --- Reviews API calls ---
   const fetchReviews = async () => {
@@ -166,7 +123,6 @@ function AdminPanelContent() {
       const res = await fetch('/api/admin/reviews', {
         method,
         headers: {
-          Authorization: `Bearer ${getStoredPassword()}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -191,8 +147,8 @@ function AdminPanelContent() {
 
       cancelEditReview()
       await fetchReviews()
-    } catch (err: any) {
-      setStatusMessage({ text: err.message || 'Error saving review', type: 'error' })
+    } catch (err: unknown) {
+      setStatusMessage({ text: (err instanceof Error ? err.message : String(err)) || 'Error saving review', type: 'error' })
     } finally {
       setIsSubmittingReview(false)
     }
@@ -205,7 +161,6 @@ function AdminPanelContent() {
       const res = await fetch('/api/admin/reviews', {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${getStoredPassword()}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ id }),
@@ -214,8 +169,8 @@ function AdminPanelContent() {
       if (!res.ok) throw new Error(data.error || 'Failed to delete review')
       setReviews((prev) => prev.filter((r) => r.id !== id))
       setStatusMessage({ text: 'Review removed from website.', type: 'success' })
-    } catch (err: any) {
-      alert(err.message || 'Failed to delete review')
+    } catch (err: unknown) {
+      alert((err instanceof Error ? err.message : String(err)) || 'Failed to delete review')
     } finally {
       setIsDeletingReview(null)
     }
@@ -234,6 +189,13 @@ function AdminPanelContent() {
       setIsLoadingGallery(false)
     }
   }
+
+  // Load data on mount
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchReviews()
+    void fetchGallery()
+  }, [])
 
   const handleGalleryFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0]
@@ -270,7 +232,6 @@ function AdminPanelContent() {
 
       const res = await fetch('/api/admin/gallery', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${getStoredPassword()}` },
         body: formData,
       })
 
@@ -285,8 +246,8 @@ function AdminPanelContent() {
       setGalleryAlt('')
       if (galleryFileInputRef.current) galleryFileInputRef.current.value = ''
       await fetchGallery()
-    } catch (err: any) {
-      setStatusMessage({ text: err.message || 'Error uploading photo', type: 'error' })
+    } catch (err: unknown) {
+      setStatusMessage({ text: (err instanceof Error ? err.message : String(err)) || 'Error uploading photo', type: 'error' })
     } finally {
       setIsUploadingGallery(false)
     }
@@ -299,7 +260,6 @@ function AdminPanelContent() {
       const res = await fetch('/api/admin/gallery', {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${getStoredPassword()}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ id }),
@@ -308,72 +268,14 @@ function AdminPanelContent() {
       if (!res.ok) throw new Error(data.error || 'Failed to delete photo')
       setGalleryItems((prev) => prev.filter((i) => i.id !== id))
       setStatusMessage({ text: 'Photo removed from gallery.', type: 'success' })
-    } catch (err: any) {
-      alert(err.message || 'Failed to delete photo')
+    } catch (err: unknown) {
+      alert((err instanceof Error ? err.message : String(err)) || 'Failed to delete photo')
     } finally {
       setIsDeletingGallery(null)
     }
   }
 
-  // --- LOGIN SCREEN (Clean White & Red Theme) ---
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-[#F9FAFB] flex flex-col justify-center items-center p-6 text-zinc-900">
-        <div className="w-full max-w-md bg-white border border-zinc-200 rounded-3xl p-8 sm:p-10 shadow-xl shadow-zinc-200/50 relative overflow-hidden">
-          <div className="w-14 h-14 rounded-2xl bg-[#FEF2F2] border border-[#FEE2E2] flex items-center justify-center text-[#C4171A] mb-6 shadow-sm">
-            <Lock className="w-7 h-7" />
-          </div>
 
-          <h1 className="text-2xl font-bold font-serif text-zinc-900 mb-1">
-            One World Admin
-          </h1>
-          <p className="text-xs text-zinc-500 mb-8">
-            Sign in to manage traveler reviews and website gallery photos.
-          </p>
-
-          <form onSubmit={handleLogin} className="space-y-5">
-            <div>
-              <label className="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-2">
-                Admin Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter admin password..."
-                className="w-full bg-zinc-50 border border-zinc-300 rounded-xl px-4 py-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-[#C4171A] focus:ring-2 focus:ring-[#C4171A]/20 transition-all"
-                autoFocus
-              />
-            </div>
-
-            {authError && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                <span>{authError}</span>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              className="w-full py-3.5 px-4 rounded-xl font-medium text-sm text-white bg-[#C4171A] hover:bg-[#A31316] transition-colors shadow-lg shadow-[#C4171A]/25 flex items-center justify-center gap-2"
-            >
-              Sign In to Admin Panel
-            </button>
-          </form>
-
-          <div className="mt-8 pt-6 border-t border-zinc-100 flex items-center justify-between">
-            <Link
-              href="/"
-              className="text-xs font-medium text-zinc-500 hover:text-[#C4171A] transition-colors flex items-center gap-1.5"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" /> Go Back to Site
-            </Link>
-            <span className="text-[11px] text-zinc-400 font-mono">One World Travel</span>
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   // --- AUTHENTICATED ADMIN PANEL (Left Side Panel + Clean White & Red Theme) ---
   return (
@@ -474,13 +376,15 @@ function AdminPanelContent() {
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>Admin Logged In</span>
             </div>
-            <button
-              onClick={handleLogout}
-              className="text-xs text-zinc-500 hover:text-[#C4171A] flex items-center gap-1 font-medium transition-colors"
-              title="Sign Out"
-            >
-              <LogOut className="w-3.5 h-3.5" /> Sign Out
-            </button>
+            <form action={logout}>
+              <button
+                type="submit"
+                className="text-xs text-zinc-500 hover:text-[#C4171A] flex items-center gap-1 font-medium transition-colors"
+                title="Sign Out"
+              >
+                <LogOut className="w-3.5 h-3.5" /> Sign Out
+              </button>
+            </form>
           </div>
 
           {/* THE SPECIFIED BUTTON: "on last a button go back to site" */}

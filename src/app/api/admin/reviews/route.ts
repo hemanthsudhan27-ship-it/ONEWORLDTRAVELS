@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { promises as fs } from 'fs'
 import path from 'path'
 import type { Review } from '@/lib/data/reviews'
+import { createClient } from '@/utils/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
@@ -9,10 +10,20 @@ const OWNER = process.env.GITHUB_REPO_OWNER || 'hemanthsudhan27-ship-it'
 const REPO = process.env.GITHUB_REPO_NAME || 'ONEWORLDTRAVELS'
 const BRANCH = process.env.GITHUB_BRANCH || 'main'
 const TOKEN = process.env.GITHUB_PAT
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Oneworldtravels@adminpassword'
 
 const REVIEWS_JSON_RELATIVE_PATH = 'src/lib/data/reviews.json'
 const LOCAL_REVIEWS_PATH = path.join(process.cwd(), REVIEWS_JSON_RELATIVE_PATH)
+
+/** Returns true when the request has a valid Supabase session. */
+async function isAuthenticated(): Promise<boolean> {
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    return !!user
+  } catch {
+    return false
+  }
+}
 
 // Helper to fetch file content and SHA from GitHub
 async function getGitHubFile(filePath: string) {
@@ -110,10 +121,10 @@ export async function GET() {
     // 2. Fall back to local file
     const localItems = await readLocalReviews()
     return NextResponse.json({ items: localItems })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching reviews:', error)
     return NextResponse.json(
-      { error: error?.message || 'Failed to fetch reviews' },
+      { error: (error instanceof Error ? error.message : "Error") || 'Failed to fetch reviews' },
       { status: 500 }
     )
   }
@@ -122,10 +133,8 @@ export async function GET() {
 // POST: Add new review
 export async function POST(req: Request) {
   try {
-    const authHeader = req.headers.get('authorization')
-    const pass = authHeader?.replace('Bearer ', '')
-    if (pass !== ADMIN_PASSWORD) {
-      return NextResponse.json({ error: 'Unauthorized: Invalid password' }, { status: 401 })
+    if (!(await isAuthenticated())) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const body = await req.json()
@@ -186,7 +195,7 @@ export async function POST(req: Request) {
           `admin(reviews): add review from ${newReview.author}`,
           currentSha
         )
-      } catch (ghErr: any) {
+      } catch (ghErr: unknown) {
         console.warn('GitHub commit failed, will still write local disk:', ghErr)
       }
     }
@@ -199,10 +208,10 @@ export async function POST(req: Request) {
       item: newReview,
       message: 'Review published successfully!',
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Review creation error:', error)
     return NextResponse.json(
-      { error: error?.message || 'Failed to create review' },
+      { error: (error instanceof Error ? error.message : "Error") || 'Failed to create review' },
       { status: 500 }
     )
   }
@@ -211,10 +220,8 @@ export async function POST(req: Request) {
 // PUT: Edit existing review
 export async function PUT(req: Request) {
   try {
-    const authHeader = req.headers.get('authorization')
-    const pass = authHeader?.replace('Bearer ', '')
-    if (pass !== ADMIN_PASSWORD) {
-      return NextResponse.json({ error: 'Unauthorized: Invalid password' }, { status: 401 })
+    if (!(await isAuthenticated())) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const body = await req.json()
@@ -296,10 +303,10 @@ export async function PUT(req: Request) {
       item: updatedReview,
       message: 'Review updated successfully!',
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Review edit error:', error)
     return NextResponse.json(
-      { error: error?.message || 'Failed to update review' },
+      { error: (error instanceof Error ? error.message : "Error") || 'Failed to update review' },
       { status: 500 }
     )
   }
@@ -308,9 +315,7 @@ export async function PUT(req: Request) {
 // DELETE: Remove a review
 export async function DELETE(req: Request) {
   try {
-    const authHeader = req.headers.get('authorization')
-    const pass = authHeader?.replace('Bearer ', '')
-    if (pass !== ADMIN_PASSWORD) {
+    if (!(await isAuthenticated())) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -369,10 +374,10 @@ export async function DELETE(req: Request) {
     await writeLocalReviews(updatedLocalItems)
 
     return NextResponse.json({ success: true, message: 'Review deleted successfully' })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Review delete error:', error)
     return NextResponse.json(
-      { error: error?.message || 'Failed to delete review' },
+      { error: (error instanceof Error ? error.message : "Error") || 'Failed to delete review' },
       { status: 500 }
     )
   }

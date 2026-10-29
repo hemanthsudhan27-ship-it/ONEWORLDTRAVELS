@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { promises as fs } from 'fs'
 import path from 'path'
 import type { GalleryItem } from '@/lib/data/gallery'
+import { createClient } from '@/utils/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
@@ -9,10 +10,20 @@ const OWNER = process.env.GITHUB_REPO_OWNER || 'hemanthsudhan27-ship-it'
 const REPO = process.env.GITHUB_REPO_NAME || 'ONEWORLDTRAVELS'
 const BRANCH = process.env.GITHUB_BRANCH || 'main'
 const TOKEN = process.env.GITHUB_PAT
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Oneworldtravels@adminpassword'
 
 const GALLERY_JSON_PATH = 'src/lib/data/gallery.json'
 const LOCAL_GALLERY_JSON_PATH = path.join(process.cwd(), GALLERY_JSON_PATH)
+
+/** Returns true when the request has a valid Supabase session. */
+async function isAuthenticated(): Promise<boolean> {
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    return !!user
+  } catch {
+    return false
+  }
+}
 
 // Helper to fetch file content and SHA from GitHub
 async function getGitHubFile(filePath: string) {
@@ -107,10 +118,10 @@ export async function GET() {
 
     const localItems = await readLocalGallery()
     return NextResponse.json({ items: localItems })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching gallery items:', error)
     return NextResponse.json(
-      { error: error?.message || 'Failed to fetch items' },
+      { error: (error instanceof Error ? error.message : "Error") || 'Failed to fetch items' },
       { status: 500 }
     )
   }
@@ -119,10 +130,8 @@ export async function GET() {
 // POST: Upload an image and add item to gallery.json
 export async function POST(req: Request) {
   try {
-    const authHeader = req.headers.get('authorization')
-    const pass = authHeader?.replace('Bearer ', '')
-    if (pass !== ADMIN_PASSWORD) {
-      return NextResponse.json({ error: 'Unauthorized: Invalid password' }, { status: 401 })
+    if (!(await isAuthenticated())) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const formData = await req.formData()
@@ -230,10 +239,10 @@ export async function POST(req: Request) {
       item: newItem,
       message: 'Image uploaded and saved successfully!',
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Upload error:', error)
     return NextResponse.json(
-      { error: error?.message || 'Upload failed' },
+      { error: (error instanceof Error ? error.message : "Error") || 'Upload failed' },
       { status: 500 }
     )
   }
@@ -242,9 +251,7 @@ export async function POST(req: Request) {
 // DELETE: Remove an item and optionally its image
 export async function DELETE(req: Request) {
   try {
-    const authHeader = req.headers.get('authorization')
-    const pass = authHeader?.replace('Bearer ', '')
-    if (pass !== ADMIN_PASSWORD) {
+    if (!(await isAuthenticated())) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -348,10 +355,10 @@ export async function DELETE(req: Request) {
     }
 
     return NextResponse.json({ success: true, message: 'Item deleted successfully' })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Delete error:', error)
     return NextResponse.json(
-      { error: error?.message || 'Delete failed' },
+      { error: (error instanceof Error ? error.message : "Error") || 'Delete failed' },
       { status: 500 }
     )
   }
