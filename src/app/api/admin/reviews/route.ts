@@ -9,7 +9,7 @@ const OWNER = process.env.GITHUB_REPO_OWNER || 'hemanthsudhan27-ship-it'
 const REPO = process.env.GITHUB_REPO_NAME || 'ONEWORLDTRAVELS'
 const BRANCH = process.env.GITHUB_BRANCH || 'main'
 const TOKEN = process.env.GITHUB_PAT
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Oneworldtravels@adminpassowrd'
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Oneworldtravels@adminpassword'
 
 const REVIEWS_JSON_RELATIVE_PATH = 'src/lib/data/reviews.json'
 const LOCAL_REVIEWS_PATH = path.join(process.cwd(), REVIEWS_JSON_RELATIVE_PATH)
