@@ -72,6 +72,12 @@ function AdminPanelContent() {
   const [galleryAspect, setGalleryAspect] = useState('4/5')
   const galleryFileInputRef = useRef<HTMLInputElement>(null)
 
+  // Helper: always read the password directly from sessionStorage at call-time.
+  // This fixes the "invalid password" bug on mobile where React state may be stale
+  // (empty string) after a tab suspend/restore, even though sessionStorage has the value.
+  const getStoredPassword = (): string =>
+    (typeof window !== 'undefined' ? sessionStorage.getItem('ow_admin_pw') : null) ?? password
+
   // Check stored session
   useEffect(() => {
     const saved = sessionStorage.getItem('ow_admin_pw')
@@ -81,6 +87,7 @@ function AdminPanelContent() {
       fetchReviews()
       fetchGallery()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleLogin = (e: React.FormEvent) => {
@@ -159,7 +166,7 @@ function AdminPanelContent() {
       const res = await fetch('/api/admin/reviews', {
         method,
         headers: {
-          Authorization: `Bearer ${password}`,
+          Authorization: `Bearer ${getStoredPassword()}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -198,7 +205,7 @@ function AdminPanelContent() {
       const res = await fetch('/api/admin/reviews', {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${password}`,
+          Authorization: `Bearer ${getStoredPassword()}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ id }),
@@ -263,7 +270,7 @@ function AdminPanelContent() {
 
       const res = await fetch('/api/admin/gallery', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${password}` },
+        headers: { Authorization: `Bearer ${getStoredPassword()}` },
         body: formData,
       })
 
@@ -292,7 +299,7 @@ function AdminPanelContent() {
       const res = await fetch('/api/admin/gallery', {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${password}`,
+          Authorization: `Bearer ${getStoredPassword()}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ id }),
