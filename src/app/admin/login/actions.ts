@@ -4,24 +4,39 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 
 export async function login(formData: FormData) {
-  const supabase = await createClient()
+  let errorMessage: string | null = null
 
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
+  try {
+    const supabase = await createClient()
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
 
-  if (error) {
-    // Redirect back to login with error message in search params
-    redirect(`/admin/login?error=${encodeURIComponent(error.message)}`)
+    if (!email || !password) {
+      errorMessage = 'Please provide both email and password.'
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) {
+        errorMessage = error.message
+      }
+    }
+  } catch (err) {
+    errorMessage = err instanceof Error ? err.message : 'Authentication service error'
+  }
+
+  if (errorMessage) {
+    redirect(`/admin/login?error=${encodeURIComponent(errorMessage)}`)
   }
 
   redirect('/admin')
 }
 
 export async function logout() {
-  const supabase = await createClient()
-  await supabase.auth.signOut()
+  try {
+    const supabase = await createClient()
+    await supabase.auth.signOut()
+  } catch (err) {
+    console.error('Logout error:', err)
+  }
   redirect('/admin/login')
 }
-

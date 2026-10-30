@@ -2,20 +2,33 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  // Start with the default response so we can attach cookie mutations.
   let supabaseResponse = NextResponse.next({ request })
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  const { pathname } = request.nextUrl
+  const isAdminRoute = pathname.startsWith('/admin')
+  const isLoginPage = pathname === '/admin/login'
+
+  // Safety guard: if Supabase environment variables are missing on the host (e.g. Vercel),
+  // NEVER throw an unhandled exception that brings down public pages with 500.
+  if (!supabaseUrl || !supabaseAnonKey) {
+    if (isAdminRoute && !isLoginPage) {
+      const loginUrl = request.nextUrl.clone()
+      loginUrl.pathname = '/admin/login'
+      return NextResponse.redirect(loginUrl)
+    }
+    return supabaseResponse
+  }
+
+  try {
+    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
       cookies: {
         getAll() {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          // Propagate cookie mutations to both the request and response so the
-          // session stays fresh across Server Components and Route Handlers.
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           )
@@ -25,38 +38,38 @@ export async function middleware(request: NextRequest) {
           )
         },
       },
+    })
+
+    // Refresh auth token
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    // Redirect unauthenticated users away from protected /admin routes
+    if (!user && isAdminRoute && !isLoginPage) {
+      const loginUrl = request.nextUrl.clone()
+      loginUrl.pathname = '/admin/login'
+      return NextResponse.redirect(loginUrl)
     }
-  )
 
-  // IMPORTANT: Do NOT add any logic between createServerClient and
-  // supabase.auth.getUser(). Even a minor mistake here can cause users to be
-  // randomly signed out. Always call getUser() immediately after creating the client.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+    // Redirect authenticated users away from the login page
+    if (user && isLoginPage) {
+      const adminUrl = request.nextUrl.clone()
+      adminUrl.pathname = '/admin'
+      return NextResponse.redirect(adminUrl)
+    }
 
-  const { pathname } = request.nextUrl
-
-  const isAdminRoute = pathname.startsWith('/admin')
-  const isLoginPage = pathname === '/admin/login'
-
-  // Redirect unauthenticated users away from protected /admin routes
-  if (!user && isAdminRoute && !isLoginPage) {
-    const loginUrl = request.nextUrl.clone()
-    loginUrl.pathname = '/admin/login'
-    return NextResponse.redirect(loginUrl)
+    return supabaseResponse
+  } catch (error) {
+    console.error('Middleware Supabase error:', error)
+    // Even if Supabase network fails, never fail public pages
+    if (isAdminRoute && !isLoginPage) {
+      const loginUrl = request.nextUrl.clone()
+      loginUrl.pathname = '/admin/login'
+      return NextResponse.redirect(loginUrl)
+    }
+    return supabaseResponse
   }
-
-  // Redirect authenticated users away from the login page
-  if (user && isLoginPage) {
-    const adminUrl = request.nextUrl.clone()
-    adminUrl.pathname = '/admin'
-    return NextResponse.redirect(adminUrl)
-  }
-
-  // IMPORTANT: Always return supabaseResponse (not a new NextResponse.next())
-  // so the refreshed session cookies are forwarded to the browser.
-  return supabaseResponse
 }
 
 export const config = {
@@ -71,4 +84,3 @@ export const config = {
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
-
