@@ -165,12 +165,11 @@ export default function HeroSection() {
             {/* H1 Headline */}
             <h1
               className="font-serif tracking-tight mb-3 sm:mb-4 text-neutral-900"
-              style={{ fontSize: 'clamp(2.15rem, 5.8vw, 5.5rem)', lineHeight: '0.96', ...fadeIn(0.20) }}
+              style={{ fontSize: 'clamp(2.15rem, 5.2vw, 5rem)', lineHeight: '1.02', ...fadeIn(0.20) }}
             >
-              Travel Beyond
+              Oneworld travels-
               <br />
-              <em className="not-italic text-neutral-800">The </em>
-              <span style={{ color: 'var(--accent)' }}>Ordinary.</span>
+              <span style={{ color: 'var(--accent)' }}>Connecting globally</span>
             </h1>
 
             {/* Subtext */}
@@ -186,12 +185,12 @@ export default function HeroSection() {
               <Link
                 href="/packages"
                 id="hero-cta-explore"
-                className="inline-flex items-center gap-2 sm:gap-2.5 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-white text-xs sm:text-sm font-semibold tracking-wide transition-all duration-300 hover:scale-[1.03] active:scale-95 shadow-md group"
-                style={{ background: '#18181b', boxShadow: '0 8px 24px rgba(24,24,27,0.25)' }}
+                className="inline-flex items-center gap-2 sm:gap-2.5 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-white !text-white text-xs sm:text-sm font-semibold tracking-wide transition-all duration-300 hover:scale-[1.03] active:scale-95 shadow-md group"
+                style={{ background: '#18181b', color: '#ffffff', boxShadow: '0 8px 24px rgba(24,24,27,0.25)' }}
               >
-                <span>Explore Packages</span>
+                <span className="text-white !text-white" style={{ color: '#ffffff' }}>Explore Packages</span>
                 <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center transition-transform group-hover:translate-x-0.5">
-                  <ArrowRight className="w-3 h-3 text-white" />
+                  <ArrowRight className="w-3 h-3 text-white" style={{ color: '#ffffff' }} />
                 </span>
               </Link>
               <a
